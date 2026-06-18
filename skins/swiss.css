@@ -1,0 +1,479 @@
+/* ==========================================================================
+   SKIN: Swiss   ·   [data-skin="swiss"]
+   International Typographic Style (Müller-Brockmann / Hofmann / Akzidenz era):
+   Helvetica, strict mathematical grid, flat fields, generous white space,
+   one bold red accent, hairline + bold ink rules, oversized flush-left
+   headlines, tabular uppercase microlabels. Pure CSS over stock shadcn.
+   Every brand value is routed through a token; shape is driven by knobs.
+   ========================================================================== */
+
+:root[data-skin="swiss"] {
+  /* ---- Type: Helvetica + a modular scale ---------------------------- */
+  --app-font-sans: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "Roboto Mono", "IBM Plex Mono", monospace;
+  --app-font-size: 14px;
+
+  /* Modular scale (1.333 — perfect fourth, a classic Swiss ratio) */
+  --sw-scale: 1.333;
+  --sw-step--1: calc(var(--sw-step-0) / var(--sw-scale));  /* microlabels */
+  --sw-step-0: var(--app-font-size);
+  --sw-step-1: calc(var(--sw-step-0) * var(--sw-scale));
+  --sw-step-2: calc(var(--sw-step-1) * var(--sw-scale));
+  --sw-step-3: calc(var(--sw-step-2) * var(--sw-scale));
+  --sw-tracking-tight: -0.03em;   /* display headlines */
+  --sw-tracking-label: 0.04em;    /* tabular uppercase microlabels */
+
+  /* ---- Tokens (everything routes through these) --------------------- */
+  --radius: 0px;
+
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #e30613;            /* signal red — the single accent */
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f2;
+  --secondary-foreground: #111111;
+  --muted: #f2f2f2;
+  --muted-foreground: #6a6a6a;   /* darkened for WCAG AA on white */
+  --accent: #e30613;
+  --accent-foreground: #ffffff;
+  --destructive: #111111;        /* destructive = ink, distinct from red */
+  --destructive-foreground: #ffffff;
+  --border: #111111;
+  --input: #111111;
+  --ring: #e30613;
+  --chart-1: #e30613;
+  --chart-2: #111111;
+  --chart-3: #6a6a6a;
+  --chart-4: #c8c8c8;
+  --chart-5: #f2f2f2;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111111;
+  --sidebar-accent: #e30613;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #111111;
+
+  /* ---- Tunable SHAPE KNOBS (consumed in rules below) --------------- */
+  --sw-rule: 1px;          /* hairline rule weight (inputs, cards, fields) */
+  --sw-rule-bold: 2px;     /* heavy structural rule (app-bar, tabs, panel top) */
+  --sw-rule-accent: 3px;   /* active-tab / accent underline weight */
+  --sw-focus-width: 2px;   /* focus ring thickness */
+  --sw-focus-offset: 2px;  /* focus ring offset */
+  --sw-space: 8px;         /* baseline grid unit for vertical rhythm */
+  --sw-underline-offset: 3px; /* link-variant underline offset */
+  --sw-motion: .12s;       /* interaction transition duration */
+}
+
+/* ---- Shell -------------------------------------------------------------- */
+[data-skin="swiss"] body { background: var(--background); color: var(--foreground); }
+[data-skin="swiss"] ::selection { background: var(--ring); color: var(--primary-foreground); }
+
+[data-skin="swiss"] .app-bar {
+  background: var(--background);
+  border: 0;
+  border-bottom: var(--sw-rule-bold) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+[data-skin="swiss"] .app-brand {
+  font-weight: 700;
+  letter-spacing: var(--sw-tracking-tight);
+  text-transform: uppercase;
+  color: var(--foreground);
+}
+[data-skin="swiss"] .app-status {
+  background: var(--background);
+  border: var(--sw-rule) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: none;
+  font-family: var(--app-font-mono);
+  letter-spacing: var(--sw-tracking-label);
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+[data-skin="swiss"] .app-nav-inner {
+  background: var(--background);
+  border: var(--sw-rule) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+[data-skin="swiss"] .app-nav-title {
+  font-family: var(--app-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--sw-tracking-label);
+  color: var(--muted-foreground);
+}
+[data-skin="swiss"] .app-nav a {
+  border-radius: var(--radius);
+  color: var(--foreground);
+}
+[data-skin="swiss"] .app-nav a:hover { background: var(--accent); color: var(--accent-foreground); }
+[data-skin="swiss"] .app-nav a[data-active="true"],
+[data-skin="swiss"] .app-nav a.active {
+  border-left: var(--sw-rule-accent) solid var(--accent);
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+/* ---- Specimen panels: classic Swiss top ink rule + grid rhythm --------- */
+[data-skin="swiss"] .specimen {
+  background: var(--card);
+  border: var(--sw-rule) solid var(--border);
+  border-top: var(--sw-rule-bold) solid var(--foreground);   /* Swiss header rule */
+  border-radius: var(--radius);
+  box-shadow: none;
+  padding: calc(var(--sw-space) * 3);   /* panel padding on the baseline grid */
+}
+[data-skin="swiss"] .specimen-head {
+  border-bottom: var(--sw-rule) solid var(--border);
+  padding-bottom: var(--sw-space);
+}
+[data-skin="swiss"] .specimen-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: var(--sw-step-1);
+  line-height: 1.05;
+  letter-spacing: var(--sw-tracking-tight);
+  color: var(--foreground);
+}
+[data-skin="swiss"] .code-toggle {
+  border-radius: var(--radius);
+  border: var(--sw-rule) solid var(--border);
+  color: var(--foreground);
+  opacity: 1;
+  font-family: var(--app-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--sw-tracking-label);
+}
+[data-skin="swiss"] .specimen-tag {
+  font-family: var(--app-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--sw-tracking-label);
+  color: var(--muted-foreground);
+  font-size: var(--sw-step--1);
+}
+
+/* ---- Hero: oversized flush-left red field ------------------------------ */
+[data-skin="swiss"] .hero {
+  background: var(--primary);
+  border: var(--sw-rule) solid var(--primary);
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+[data-skin="swiss"] .hero-kicker {
+  color: var(--primary-foreground);
+  opacity: 1;
+  font-family: var(--app-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--sw-tracking-label);
+}
+[data-skin="swiss"] .hero-title {
+  color: var(--primary-foreground);
+  text-transform: uppercase;
+  font-size: clamp(var(--sw-step-2), 4vw, calc(var(--sw-step-3) * var(--sw-scale)));
+  line-height: 1.02;
+  letter-spacing: var(--sw-tracking-tight);
+  font-weight: 700;
+}
+[data-skin="swiss"] .hero-sub { color: var(--primary-foreground); }
+
+/* ---- Buttons: differentiated variants ---------------------------------- */
+[data-skin="swiss"] .group\/button {
+  border: var(--sw-rule) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  font-weight: 600;
+  box-shadow: none;
+  transition: background var(--sw-motion) linear, color var(--sw-motion) linear;
+}
+[data-skin="swiss"] .group\/button:hover { background: var(--foreground); color: var(--background); }
+[data-skin="swiss"] .group\/button:focus-visible {
+  outline: var(--sw-focus-width) solid var(--ring);
+  outline-offset: var(--sw-focus-offset);
+}
+
+/* default — solid signal red */
+[data-skin="swiss"] .group\/button[data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+[data-skin="swiss"] .group\/button[data-variant="default"]:hover {
+  background: color-mix(in srgb, var(--primary) 82%, var(--foreground));
+  border-color: color-mix(in srgb, var(--primary) 82%, var(--foreground));
+}
+
+/* secondary — filled muted grey, no border (distinct fill) */
+[data-skin="swiss"] .group\/button[data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: transparent;
+}
+[data-skin="swiss"] .group\/button[data-variant="secondary"]:hover {
+  background: color-mix(in srgb, var(--secondary) 88%, var(--foreground));
+  color: var(--secondary-foreground);
+}
+
+/* outline — ink hairline on white (no fill) */
+[data-skin="swiss"] .group\/button[data-variant="outline"] {
+  background: var(--card);
+  color: var(--foreground);
+  border: var(--sw-rule) solid var(--border);
+}
+[data-skin="swiss"] .group\/button[data-variant="outline"]:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* ghost — fully borderless, transparent until hover */
+[data-skin="swiss"] .group\/button[data-variant="ghost"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--foreground);
+}
+[data-skin="swiss"] .group\/button[data-variant="ghost"]:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+/* destructive — solid ink with a red warning baseline (distinct from outline:hover) */
+[data-skin="swiss"] .group\/button[data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border-color: var(--destructive);
+  box-shadow: inset 0 calc(-1 * var(--sw-rule-accent)) 0 0 var(--primary);
+}
+[data-skin="swiss"] .group\/button[data-variant="destructive"]:hover {
+  background: color-mix(in srgb, var(--destructive) 72%, var(--primary));
+  border-color: color-mix(in srgb, var(--destructive) 72%, var(--primary));
+}
+
+/* link — red underlined, no chrome */
+[data-skin="swiss"] .group\/button[data-variant="link"] {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: var(--sw-underline-offset);
+}
+[data-skin="swiss"] .group\/button[data-variant="link"]:hover { color: color-mix(in srgb, var(--primary) 82%, var(--foreground)); }
+
+/* pressed — placed after every variant :hover rule and raised to 0,5,0 so the
+   press state always beats the equal-specificity hover rules in the cascade */
+[data-skin="swiss"] .group\/button[data-variant]:active:not(:disabled) {
+  background: color-mix(in srgb, var(--foreground) 80%, var(--background));
+  border-color: color-mix(in srgb, var(--foreground) 80%, var(--background));
+  color: var(--background);
+}
+/* chromeless variants keep a transparent-background press */
+[data-skin="swiss"] .group\/button[data-variant="ghost"]:active:not(:disabled) {
+  background: color-mix(in srgb, var(--muted) 80%, var(--foreground));
+}
+[data-skin="swiss"] .group\/button[data-variant="link"]:active:not(:disabled) {
+  background: transparent;
+  border-color: transparent;
+  color: color-mix(in srgb, var(--primary) 82%, var(--foreground));
+}
+
+/* disabled — drops out of the accent channel entirely, reads non-interactive */
+[data-skin="swiss"] .group\/button:disabled,
+[data-skin="swiss"] .group\/button:disabled:hover {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-color: transparent;
+  box-shadow: none;
+  opacity: 1;
+}
+
+/* chromeless variants stay chromeless when disabled — no grey slab */
+[data-skin="swiss"] .group\/button[data-variant="link"]:disabled,
+[data-skin="swiss"] .group\/button[data-variant="ghost"]:disabled {
+  background: transparent;
+  color: var(--muted-foreground);
+  text-decoration-color: var(--muted-foreground);
+}
+
+/* ---- Fields: underline-only, on-grid ----------------------------------- */
+[data-skin="swiss"] [data-slot="input"],
+[data-skin="swiss"] [data-slot="textarea"],
+[data-skin="swiss"] [data-slot="select-trigger"],
+[data-skin="swiss"] .skin-select {
+  border: 0;
+  border-bottom: var(--sw-rule) solid var(--input);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--foreground);
+}
+[data-skin="swiss"] [data-slot="input"]::placeholder,
+[data-skin="swiss"] [data-slot="textarea"]::placeholder { color: var(--muted-foreground); }
+[data-skin="swiss"] [data-slot="input"]:focus-visible,
+[data-skin="swiss"] [data-slot="textarea"]:focus-visible,
+[data-skin="swiss"] [data-slot="select-trigger"]:focus-visible,
+[data-skin="swiss"] .skin-select:focus-visible {
+  outline: 0;
+  border-bottom-color: var(--ring);
+  /* thicken the underline without changing border width — no reflow */
+  box-shadow: 0 calc(var(--sw-rule-bold) - var(--sw-rule)) 0 0 var(--ring);
+}
+
+/* ---- Cards & overlays -------------------------------------------------- */
+[data-skin="swiss"] [data-slot="card"] {
+  border: var(--sw-rule) solid var(--border);
+  border-top: var(--sw-rule-bold) solid var(--foreground);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: none;
+}
+[data-skin="swiss"] [data-slot="popover-content"],
+[data-skin="swiss"] [data-slot="dropdown-menu-content"],
+[data-skin="swiss"] [data-slot="context-menu-content"],
+[data-skin="swiss"] [data-slot="select-content"],
+[data-skin="swiss"] [data-slot="command"],
+[data-skin="swiss"] [data-slot="hover-card-content"],
+[data-skin="swiss"] [data-slot="dialog-content"],
+[data-skin="swiss"] [data-slot="alert-dialog-content"],
+[data-skin="swiss"] [data-slot="sheet-content"] {
+  border: var(--sw-rule) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: none;
+}
+/* dialogs carry the same bold top ink rule as cards/specimens —
+   layer hierarchy stays legible on white-over-white */
+[data-skin="swiss"] [data-slot="dialog-content"],
+[data-skin="swiss"] [data-slot="alert-dialog-content"] {
+  border-top: var(--sw-rule-bold) solid var(--foreground);
+}
+[data-skin="swiss"] [data-slot="tooltip-content"] {
+  border-radius: var(--radius);
+  background: var(--foreground);
+  color: var(--background);
+  font-family: var(--app-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--sw-tracking-label);
+  font-size: var(--sw-step--1);
+  padding: calc(var(--sw-space) / 2) var(--sw-space);
+}
+[data-skin="swiss"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="swiss"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="swiss"] [data-slot="select-item"][data-highlighted],
+[data-skin="swiss"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* ---- Selection controls ------------------------------------------------ */
+[data-skin="swiss"] [data-slot="checkbox"] {
+  border: var(--sw-rule) solid var(--border);
+  border-radius: var(--radius);
+}
+[data-skin="swiss"] [data-slot="checkbox"][data-state="checked"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+[data-skin="swiss"] [data-slot="radio-group-item"] {
+  border: var(--sw-rule) solid var(--border);
+  color: var(--primary);
+}
+
+/* ---- Tabs -------------------------------------------------------------- */
+[data-skin="swiss"] [data-slot="tabs-list"] {
+  border-radius: var(--radius);
+  border-bottom: var(--sw-rule-bold) solid var(--border);
+  gap: 0;
+  background: transparent;
+}
+[data-skin="swiss"] [data-slot="tabs-trigger"] {
+  border-radius: var(--radius);
+  text-transform: uppercase;
+  letter-spacing: var(--sw-tracking-label);
+  font-weight: 600;
+  color: var(--muted-foreground);
+  /* reserve the accent underline so activation never shifts layout,
+     and overlap the list's ink rule so the red sits on it */
+  border-bottom: var(--sw-rule-accent) solid transparent;
+  margin-bottom: calc(-1 * var(--sw-rule-bold));
+}
+[data-skin="swiss"] [data-slot="tabs-trigger"][data-state="active"] {
+  border-bottom-color: var(--accent);
+  color: var(--foreground);
+}
+
+/* ---- Badge ------------------------------------------------------------- */
+[data-skin="swiss"] [data-slot="badge"] {
+  border-radius: var(--radius);
+  border: var(--sw-rule) solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  text-transform: uppercase;
+  font-family: var(--app-font-mono);
+  font-size: var(--sw-step--1);
+  letter-spacing: var(--sw-tracking-label);
+}
+[data-skin="swiss"] [data-slot="badge"][data-variant="outline"] {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--foreground);
+}
+[data-skin="swiss"] [data-slot="badge"][data-variant="default"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+[data-skin="swiss"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--secondary);
+  border-color: transparent;
+  color: var(--secondary-foreground);
+}
+[data-skin="swiss"] [data-slot="badge"][data-variant="destructive"] {
+  background: var(--destructive);
+  border-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+/* ---- Switch / progress / slider --------------------------------------- */
+[data-skin="swiss"] [data-slot="switch"] {
+  border-radius: var(--radius);
+  border: var(--sw-rule) solid var(--border);
+  background: var(--card);
+}
+[data-skin="swiss"] [data-slot="switch"][data-state="checked"] {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+[data-skin="swiss"] [data-slot="switch"] [data-slot="switch-thumb"] {
+  border-radius: var(--radius);
+  background: var(--foreground);
+}
+[data-skin="swiss"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: var(--primary-foreground);
+}
+
+[data-skin="swiss"] [data-slot="progress"] {
+  border-radius: var(--radius);
+  background: var(--muted);
+  border: var(--sw-rule) solid var(--border);
+}
+[data-skin="swiss"] [data-slot="progress-indicator"] { background: var(--primary); }
+
+[data-skin="swiss"] [data-slot="slider-track"] {
+  border-radius: var(--radius);
+  background: var(--muted);
+  border: var(--sw-rule) solid var(--border);
+}
+[data-skin="swiss"] [data-slot="slider-range"] { background: var(--primary); }
+[data-skin="swiss"] [data-slot="slider-thumb"] {
+  border: var(--sw-rule) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--primary);
+}

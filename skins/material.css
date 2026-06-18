@@ -1,0 +1,417 @@
+/* ==========================================================================
+   SKIN: Material 3   ·   [data-skin="material"]
+   Tonal surfaces, soft elevation, state-layer overlays, M3 shape scale, Roboto.
+   Pure CSS over stock shadcn. Every knob in :root is consumed below.
+   ========================================================================== */
+
+:root[data-skin="material"] {
+  --app-font-sans: "Roboto", "Google Sans", "Inter", system-ui, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "Roboto Mono", monospace;
+  --app-font-size: 14px;
+
+  /* ---- Tunable shape knobs (consumed throughout) ---- */
+  --md-shape-sm: 8px;     /* inputs, menus, badges */
+  --md-shape: 20px;       /* medium component corner (segmented tabs track) */
+  --md-shape-lg: 28px;    /* cards, app-bar, dialogs */
+  --md-shape-full: 999px; /* pills: tabs, switch, FAB, progress */
+  --md-elevation: 6;      /* master elevation scalar -> drives all shadows */
+  --md-state-opacity: 0.08; /* M3 state-layer alpha (hover) */
+  --md-tint: 5;           /* tonal surface tint percentage (surface elevation) */
+  --md-hero-shade: 16%;   /* hero gradient darkening amount */
+
+  --radius: var(--md-shape-lg);
+
+  /* M3 baseline color roles */
+  --background: #fef7ff;
+  --foreground: #1d1b20;
+  --card: #f7f2fa;
+  --card-foreground: #1d1b20;
+  --popover: #f3edf7;
+  --popover-foreground: #1d1b20;
+  --primary: #6750a4;
+  --primary-foreground: #ffffff;
+  --secondary: #e8def8;
+  --secondary-foreground: #1d192b;
+  --muted: #e7e0ec;
+  --muted-foreground: #49454f;
+  --accent: #625b71;
+  --accent-foreground: #ffffff;
+  --destructive: #b3261e;
+  --destructive-foreground: #ffffff;
+  --border: #cac4d0;
+  --input: #79747e;
+  --ring: #6750a4;
+  --ring-offset: 2px;
+  --chart-1: #6750a4;
+  --chart-2: #386a20;
+  --chart-3: #006a6a;
+  --chart-4: #8c4a00;
+  --chart-5: #b3261e;
+  --sidebar: #f3edf7;
+  --sidebar-foreground: #1d1b20;
+  --sidebar-accent: #e8def8;
+  --sidebar-accent-foreground: #1d192b;
+  --sidebar-border: #cac4d0;
+
+  /* ---- Composed elevation tokens (derived from --md-elevation) ---- */
+  /* Level 1: hover elevation for filled buttons / floating inline controls
+     (M3 filled buttons sit at elevation 0 at rest; level 1 at rest is the Elevated variant) */
+  --md-e1:
+    0 1px 2px rgba(0,0,0,.30),
+    0 calc(var(--md-elevation) * .16px) calc(var(--md-elevation) * .5px) 1px rgba(0,0,0,.15);
+  /* Level 2: floating surfaces (app-bar, panels) */
+  --md-e2:
+    0 1px 2px rgba(0,0,0,.30),
+    0 calc(var(--md-elevation) * .4px) calc(var(--md-elevation) * 1.4px) calc(var(--md-elevation) * .12px) rgba(0,0,0,.15);
+  /* Level 3: menus / dialogs */
+  --md-e3:
+    0 calc(var(--md-elevation) * .2px) calc(var(--md-elevation) * .5px) rgba(0,0,0,.30),
+    0 calc(var(--md-elevation) * .8px) calc(var(--md-elevation) * 2.4px) calc(var(--md-elevation) * .4px) rgba(0,0,0,.15);
+  /* Card shadow: deliberately light; M3 cards lean on tonal tint not shadow */
+  --md-e-card: 0 1px 3px rgba(0,0,0,.10);
+
+  /* Tonal surface tint: primary mixed into the surface for elevation read */
+  --md-surface-1: color-mix(in srgb, var(--primary) calc(var(--md-tint) * 1%), var(--card));
+  --md-surface-2: color-mix(in srgb, var(--primary) calc(var(--md-tint) * 1.6%), var(--card));
+}
+
+[data-skin="material"] body {
+  background: var(--background);
+  letter-spacing: .0089em;
+}
+[data-skin="material"] ::selection { background: var(--secondary); color: var(--secondary-foreground); }
+
+/* ---- Shell: app-bar / panels (level 2 + tonal tint) ---- */
+[data-skin="material"] .app-bar {
+  background: var(--md-surface-2);
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  box-shadow: var(--md-e2);
+  backdrop-filter: none;
+}
+[data-skin="material"] .app-nav-inner,
+[data-skin="material"] .specimen,
+[data-skin="material"] .app-status {
+  background: var(--md-surface-1);
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  box-shadow: var(--md-e-card);
+}
+[data-skin="material"] .specimen-head { border-bottom: 1px solid var(--muted); }
+/* Showcase chrome toggles ("Show code" / "Show the delta" / "Customize"): full-pill, on-language */
+[data-skin="material"] .specimen-head button,
+[data-skin="material"] .code-toggle {
+  border-radius: var(--md-shape-full);
+  border-color: var(--input);
+}
+
+[data-skin="material"] .hero {
+  background:
+    radial-gradient(120% 140% at 85% -20%, color-mix(in srgb, var(--primary-foreground) 22%, var(--primary)) 0%, transparent 55%),
+    linear-gradient(160deg, var(--primary) 0%, color-mix(in srgb, #000 var(--md-hero-shade), var(--primary)) 100%);
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  box-shadow: var(--md-e2);
+}
+[data-skin="material"] .hero-kicker { color: color-mix(in srgb, var(--primary-foreground) 80%, var(--primary)); letter-spacing: .06em; text-transform: uppercase; }
+[data-skin="material"] .hero-title { color: var(--primary-foreground); font-weight: 500; }
+[data-skin="material"] .hero-sub { color: color-mix(in srgb, var(--primary-foreground) 86%, var(--primary)); }
+
+[data-skin="material"] .specimen-title,
+[data-skin="material"] .stage-title { font-weight: 500; letter-spacing: 0; }
+
+/* ---- Nav: pill rows with state layer ---- */
+[data-skin="material"] .app-nav a {
+  border-radius: var(--md-shape-full);
+  position: relative;
+  transition: background-color .15s ease;
+}
+[data-skin="material"] .app-nav a:hover {
+  background: color-mix(in srgb, var(--primary) calc(var(--md-state-opacity) * 100%), transparent);
+  color: var(--secondary-foreground);
+}
+
+/* ==========================================================================
+   BUTTONS — distinct M3 variants with translucent state layers
+   ========================================================================== */
+[data-skin="material"] .group\/button {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  border-radius: var(--md-shape-full); /* M3 filled button = full stadium */
+  height: 40px;
+  padding-inline: 24px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: none; /* M3 filled buttons are elevation 0 at rest */
+  font-weight: 500;
+  letter-spacing: .006em; /* ~0.1px label-large tracking, not toy 2% */
+  transition: box-shadow .18s ease, background-color .15s ease;
+}
+/* M3 Expressive size scale (button.tsx emits data-size) */
+[data-skin="material"] .group\/button[data-size="sm"] { height: 32px; padding-inline: 16px; }
+[data-skin="material"] .group\/button[data-size="lg"] { height: 48px; padding-inline: 28px; font-size: 1rem; }
+[data-skin="material"] .group\/button[data-size="icon"] { padding-inline: 0; } /* keep round icon button square */
+/* State layer: translucent overlay (the M3 signature) */
+[data-skin="material"] .group\/button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity .15s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+[data-skin="material"] .group\/button:hover::after { opacity: var(--md-state-opacity); }
+[data-skin="material"] .group\/button:hover { box-shadow: var(--md-e1); }
+[data-skin="material"] .group\/button:active:not(:disabled)::after { opacity: calc(var(--md-state-opacity) * 1.5); }
+[data-skin="material"] .group\/button:active:not(:disabled) { box-shadow: none; }
+[data-skin="material"] .group\/button:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: var(--ring-offset);
+  box-shadow: var(--md-e1);
+}
+
+/* Filled tonal: secondary container, no elevation */
+[data-skin="material"] .group\/button[data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  box-shadow: none;
+}
+[data-skin="material"] .group\/button[data-variant="secondary"]:hover { box-shadow: var(--md-e1); }
+
+/* Outlined: outline-color border, primary label, no fill */
+[data-skin="material"] .group\/button[data-variant="outline"] {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--input);
+  box-shadow: none;
+}
+[data-skin="material"] .group\/button[data-variant="outline"]:hover { box-shadow: none; }
+[data-skin="material"] .group\/button[data-variant="outline"]:hover::after { opacity: var(--md-state-opacity); }
+
+/* Text button (ghost): no container, primary label */
+[data-skin="material"] .group\/button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--primary);
+  box-shadow: none;
+  padding-inline: 12px;
+}
+[data-skin="material"] .group\/button[data-variant="ghost"]:hover { box-shadow: none; }
+
+/* Destructive: error container */
+[data-skin="material"] .group\/button[data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+[data-skin="material"] .group\/button[data-variant="destructive"]:focus-visible { outline-color: var(--destructive); }
+
+/* Disabled: M3 spec — 12% on-surface container, 38% on-surface label, flat */
+[data-skin="material"] .group\/button:disabled {
+  background: color-mix(in srgb, var(--foreground) 12%, transparent);
+  color: color-mix(in srgb, var(--foreground) 38%, transparent);
+  box-shadow: none;
+  opacity: 1;
+}
+[data-skin="material"] .group\/button:disabled::after { content: none; }
+[data-skin="material"] .group\/button[data-variant="outline"]:disabled {
+  border-color: color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+/* Link */
+[data-skin="material"] .group\/button[data-variant="link"] {
+  background: none;
+  color: var(--primary);
+  box-shadow: none;
+  height: auto;
+  padding-inline: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-skin="material"] .group\/button[data-variant="link"]::after { content: none; }
+[data-skin="material"] .group\/button[data-variant="link"]:disabled {
+  color: color-mix(in srgb, var(--foreground) 38%, transparent);
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   INPUTS — M3 outlined fields (uniform extra-small 4px corners)
+   ========================================================================== */
+[data-skin="material"] [data-slot="input"],
+[data-skin="material"] [data-slot="textarea"],
+[data-skin="material"] [data-slot="select-trigger"],
+[data-skin="material"] .skin-select {
+  border: 1px solid var(--input);
+  border-radius: calc(var(--md-shape-sm) / 2);
+  background: var(--card);
+  color: var(--foreground);
+}
+[data-skin="material"] [data-slot="input"]::placeholder,
+[data-skin="material"] [data-slot="textarea"]::placeholder { color: var(--muted-foreground); }
+[data-skin="material"] [data-slot="input"]:disabled::placeholder,
+[data-skin="material"] [data-slot="textarea"]:disabled::placeholder { color: color-mix(in srgb, var(--foreground) 38%, transparent); }
+/* Disabled fields: M3 spec — 12% on-surface outline, 38% on-surface label, no fill change */
+[data-skin="material"] [data-slot="input"]:disabled,
+[data-skin="material"] [data-slot="textarea"]:disabled,
+[data-skin="material"] [data-slot="select-trigger"]:disabled {
+  border-color: color-mix(in srgb, var(--foreground) 12%, transparent);
+  color: color-mix(in srgb, var(--foreground) 38%, transparent);
+  opacity: 1;
+}
+[data-skin="material"] [data-slot="input"]:focus-visible,
+[data-skin="material"] [data-slot="textarea"]:focus-visible,
+[data-skin="material"] [data-slot="select-trigger"]:focus-visible {
+  outline: 0;
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+/* ==========================================================================
+   SURFACES — cards (tonal tint, soft shadow) & menus/dialogs (level 3)
+   ========================================================================== */
+[data-skin="material"] [data-slot="card"] {
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-1);
+  box-shadow: var(--md-e-card);
+}
+[data-skin="material"] [data-slot="popover-content"],
+[data-skin="material"] [data-slot="dropdown-menu-content"],
+[data-skin="material"] [data-slot="context-menu-content"],
+[data-skin="material"] [data-slot="select-content"],
+[data-skin="material"] [data-slot="command"],
+[data-skin="material"] [data-slot="hover-card-content"] {
+  border: 0;
+  border-radius: var(--md-shape-sm);
+  background: var(--md-surface-2);
+  color: var(--popover-foreground);
+  box-shadow: var(--md-e3);
+}
+/* Dialogs & sheets: M3 dialogs use the extra-large shape, not the menu shape */
+[data-skin="material"] [data-slot="dialog-content"],
+[data-skin="material"] [data-slot="alert-dialog-content"],
+[data-skin="material"] [data-slot="sheet-content"] {
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-2);
+  color: var(--popover-foreground);
+  box-shadow: var(--md-e3);
+}
+/* Tooltip: M3 inverse-surface roles, derived from the surface tokens */
+[data-skin="material"] [data-slot="tooltip-content"] {
+  border-radius: calc(var(--md-shape-sm) / 2);
+  background: color-mix(in srgb, var(--foreground) 90%, var(--background));
+  color: color-mix(in srgb, var(--background) 95%, var(--foreground));
+}
+
+/* Menu items: state-layer highlight */
+[data-skin="material"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="material"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="material"] [data-slot="select-item"][data-highlighted],
+[data-skin="material"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--md-shape-sm);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+/* ==========================================================================
+   SELECTION CONTROLS
+   ========================================================================== */
+[data-skin="material"] [data-slot="checkbox"] {
+  border: 2px solid var(--muted-foreground);
+  border-radius: calc(var(--md-shape-sm) / 2);
+}
+[data-skin="material"] [data-slot="checkbox"][data-state="checked"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+[data-skin="material"] [data-slot="radio-group-item"] {
+  border: 2px solid var(--muted-foreground);
+}
+[data-skin="material"] [data-slot="radio-group-item"][data-state="checked"] {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Tabs: segmented track (medium shape) + secondary-container active segment */
+[data-skin="material"] [data-slot="tabs-list"] {
+  border-radius: var(--md-shape);
+  background: var(--muted);
+  padding: 4px;
+  gap: 4px;
+}
+[data-skin="material"] [data-slot="tabs-trigger"] {
+  border-radius: var(--md-shape-full);
+  font-weight: 500;
+}
+[data-skin="material"] [data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+/* Badges: M3 container/on-container pairs per variant */
+[data-skin="material"] [data-slot="badge"] {
+  border-radius: var(--md-shape-sm);
+  font-weight: 500;
+}
+[data-skin="material"] [data-slot="badge"][data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 0;
+}
+[data-skin="material"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 0;
+}
+[data-skin="material"] [data-slot="badge"][data-variant="outline"] {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--input);
+}
+[data-skin="material"] [data-slot="badge"][data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border: 0;
+}
+
+/* Switch: M3 track/handle spec — light track + dark small thumb off, primary on */
+[data-skin="material"] [data-slot="switch"] {
+  border-radius: var(--md-shape-full);
+  background: var(--muted);
+  border: 2px solid var(--input);
+}
+[data-skin="material"] [data-slot="switch"][data-state="checked"] {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+[data-skin="material"] [data-slot="switch"] [data-slot="switch-thumb"] {
+  background: var(--input);
+  border-radius: var(--md-shape-full);
+  transform: scale(.66);
+}
+[data-skin="material"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: var(--primary-foreground);
+  transform: scale(1);
+}
+
+/* Progress & slider */
+[data-skin="material"] [data-slot="progress"] {
+  border-radius: var(--md-shape-full);
+  background: var(--muted);
+}
+[data-skin="material"] [data-slot="progress-indicator"] { background: var(--primary); }
+[data-skin="material"] [data-slot="slider-track"] {
+  border-radius: var(--md-shape-full);
+  background: var(--muted);
+}
+[data-skin="material"] [data-slot="slider-range"] { background: var(--primary); }
+[data-skin="material"] [data-slot="slider-thumb"] {
+  background: var(--primary);
+  border: 0;
+  box-shadow: var(--md-e1);
+}

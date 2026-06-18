@@ -1,0 +1,506 @@
+/* ==========================================================================
+   SKIN: Mac OS X Aqua   ·   [data-skin="aqua"]
+   Glossy gel "lozenge" controls with a hard 50% mid-line glass reflection,
+   pinstripe surfaces, candy-blue default, soft rounded everything, and the
+   signature pronounced blue focus halo. Lucida Grande-ish type.
+   Pure CSS over stock shadcn — all geometry/intensity driven by shape knobs.
+   ========================================================================== */
+
+:root[data-skin="aqua"] {
+  --app-font-sans: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "Monaco", "Menlo", monospace;
+  --app-font-size: 13px;
+
+  --radius: 9px;
+
+  --background: #ced9e8;
+  --foreground: #2b2b2b;          /* period-accurate near-black ink */
+  --card: #ffffff;
+  --card-foreground: #2b2b2b;
+  --popover: #ffffff;
+  --popover-foreground: #2b2b2b;
+  --primary: #2e6ff2;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f5f8;
+  --secondary-foreground: #2b2b2b;
+  --muted: #e7ecf3;
+  --muted-foreground: #6a7588;    /* warmer slate */
+  --accent: #5b9bff;              /* aqua candy-blue gel highlight */
+  --accent-foreground: #ffffff;
+  --destructive: #d12b22;
+  --border: #9aa7bd;
+  --input: #9aa7bd;
+  --ring: #2e6ff2;
+  --chart-1: #2e6ff2;
+  --chart-2: #19b3e6;
+  --chart-3: #34c759;
+  --chart-4: #ff9500;
+  --chart-5: #ff3b30;
+  --sidebar: #dde4ef;
+  --sidebar-foreground: #2b2b2b;
+  --sidebar-accent: #2e6ff2;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #9aa7bd;
+
+  /* ---- Tunable shape knobs (consumed below via calc/color-mix) ----------- */
+  --aqua-gloss: 0.85;             /* opacity of the top gel highlight band   */
+  --aqua-radius-control: 999px;   /* pill radius for buttons/tabs/badges     */
+  --aqua-radius-surface: 12px;    /* window/card/popover corner radius       */
+  --aqua-gel-hi: #a9ccff;         /* default-button gel top stop (bright)    */
+  --aqua-gel-lo: #1e63ea;         /* default-button gel bottom stop (deep)   */
+  --aqua-shadow-strength: 0.22;   /* master drop-shadow alpha multiplier     */
+  --aqua-focus-spread: 4px;       /* blue focus halo spread radius           */
+  --aqua-hero-accent: var(--chart-2);  /* hero kicker accent (cyan)          */
+  --aqua-helptag: #ffffcc;        /* iconic help-tag yellow (tooltip)        */
+  --aqua-helptag-border: #b9b98a; /* help-tag border                         */
+
+  /* Focus halo color — derived from the ring token (one source of truth) */
+  --aqua-focus-ring: color-mix(in srgb, var(--ring) 60%, transparent);
+
+  /* Iconic Aqua pinstripe (fine 1px-pitch variant) */
+  --aqua-pinstripe:
+    repeating-linear-gradient(0deg,
+      color-mix(in srgb, var(--card) 88%, var(--primary) 12%) 0 1px,
+      var(--card) 1px 4px);
+
+  /* Composed shadow tokens built from the strength knob */
+  --aqua-drop:
+    0 2px 8px rgba(20,40,80, calc(var(--aqua-shadow-strength) * 0.85));
+  --aqua-drop-lg:
+    0 12px 32px rgba(10,30,70, calc(var(--aqua-shadow-strength) * 1.4));
+  --aqua-top-sheen: inset 0 1px 0 rgba(255,255,255,.9);
+  --aqua-inset-well: inset 0 1px 3px rgba(20,40,80, calc(var(--aqua-shadow-strength) * 0.85));
+}
+
+[data-skin="aqua"] body {
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 3px, rgba(255,255,255,0) 3px 4px),
+    linear-gradient(
+      color-mix(in srgb, var(--background) 92%, #fff),
+      color-mix(in srgb, var(--background) 94%, var(--aqua-gel-lo)));
+}
+[data-skin="aqua"] ::selection { background: var(--accent); color: color-mix(in srgb, var(--aqua-gel-lo) 35%, #000); }
+
+/* ---- Shell -------------------------------------------------------------- */
+[data-skin="aqua"] .app-bar {
+  background: linear-gradient(
+    color-mix(in srgb, var(--card) 97%, var(--accent)),
+    color-mix(in srgb, var(--muted) 85%, var(--border)));
+  border: 1px solid var(--border);
+  border-radius: var(--aqua-radius-surface);
+  box-shadow: var(--aqua-top-sheen), var(--aqua-drop);
+  backdrop-filter: none;
+}
+[data-skin="aqua"] .app-nav-inner,
+[data-skin="aqua"] .specimen,
+[data-skin="aqua"] .app-status {
+  background:
+    var(--aqua-pinstripe),
+    var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--aqua-radius-surface);
+  box-shadow: var(--aqua-drop), var(--aqua-top-sheen);
+}
+[data-skin="aqua"] .specimen-head {
+  background: var(--aqua-pinstripe), var(--card);
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--aqua-radius-surface) var(--aqua-radius-surface) 0 0;
+  box-shadow: var(--aqua-top-sheen);
+}
+[data-skin="aqua"] .hero {
+  background: linear-gradient(#1a1a1a, #000);
+  border-radius: var(--aqua-radius-surface);
+  box-shadow: var(--aqua-drop-lg);
+}
+[data-skin="aqua"] .hero-kicker { color: var(--aqua-hero-accent); }
+[data-skin="aqua"] .hero-title { color: #fff; }
+[data-skin="aqua"] .hero-sub { color: color-mix(in srgb, var(--background) 85%, #fff); }
+[data-skin="aqua"] .app-nav a { border-radius: 6px; }
+[data-skin="aqua"] .app-nav a:hover { background: var(--primary); color: #fff; }
+
+/* ---- Controls — glossy gel lozenges ------------------------------------ */
+[data-skin="aqua"] .group\/button {
+  border: 1px solid var(--border);
+  border-radius: var(--aqua-radius-control);
+  color: var(--foreground);
+  /* white plastic lozenge with bright top gloss + hard 50% reflection split */
+  background:
+    linear-gradient(rgba(255,255,255,var(--aqua-gloss)), rgba(255,255,255,0) 49%),
+    linear-gradient(#ffffff 0, #f2f5fb 49%, #dde4ee 50%, #cdd6e4 100%);
+  box-shadow:
+    var(--aqua-top-sheen),
+    inset 0 -5px 7px rgba(120,160,220,.28),
+    0 1px 2px rgba(20,40,80, calc(var(--aqua-shadow-strength) + 0.04));
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);   /* light-text emboss */
+  font-weight: 600;
+  transition: box-shadow .12s ease, filter .12s ease;
+}
+[data-skin="aqua"] .group\/button:hover:not(:disabled) { filter: brightness(1.05); }
+[data-skin="aqua"] .group\/button:focus-visible {
+  outline: 0;
+  box-shadow:
+    var(--aqua-top-sheen),
+    inset 0 -5px 7px rgba(120,160,220,.28),
+    0 0 0 var(--aqua-focus-spread) var(--aqua-focus-ring);
+}
+
+/* DEFAULT — the signature candy-blue gel with hard mid-line reflection */
+[data-skin="aqua"] .group\/button[data-variant="default"] {
+  border-color: color-mix(in srgb, var(--aqua-gel-lo) 70%, #000 30%);
+  color: var(--primary-foreground);
+  background:
+    linear-gradient(rgba(255,255,255,calc(var(--aqua-gloss) + 0.1)), rgba(255,255,255,0) 49%),
+    linear-gradient(
+      var(--aqua-gel-hi) 0,
+      var(--primary) 49%,
+      color-mix(in srgb, var(--aqua-gel-lo) 75%, #000) 50%,
+      var(--aqua-gel-lo) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.75),
+    inset 0 -6px 8px color-mix(in srgb, var(--aqua-gel-hi) 55%, transparent),       /* bottom inner glow */
+    0 1px 3px rgba(20,60,160, calc(var(--aqua-shadow-strength) + 0.28));
+  text-shadow: 0 -1px 0 rgba(0,0,0,.28);          /* dark emboss on light text */
+}
+
+/* SECONDARY — flat warm gel, distinct from white default */
+[data-skin="aqua"] .group\/button[data-variant="secondary"] {
+  border-color: var(--border);
+  color: var(--secondary-foreground);
+  background:
+    linear-gradient(rgba(255,255,255,var(--aqua-gloss)), rgba(255,255,255,0) 49%),
+    linear-gradient(
+      color-mix(in srgb, var(--secondary) 95%, var(--border)) 0,
+      color-mix(in srgb, var(--secondary) 80%, var(--border)) 49%,
+      color-mix(in srgb, var(--secondary) 60%, var(--border)) 50%,
+      color-mix(in srgb, var(--secondary) 45%, var(--border)) 100%);
+}
+
+/* OUTLINE — thin ink ring on translucent white, no gel fill */
+[data-skin="aqua"] .group\/button[data-variant="outline"] {
+  border-color: var(--border);
+  color: var(--foreground);
+  background: rgba(255,255,255,.55);
+  box-shadow: var(--aqua-top-sheen);
+}
+
+/* DESTRUCTIVE — red gel lozenge, matching mid-line split + emboss */
+[data-skin="aqua"] .group\/button[data-variant="destructive"] {
+  border-color: color-mix(in srgb, var(--destructive) 65%, #000);
+  color: var(--primary-foreground);
+  background:
+    linear-gradient(rgba(255,255,255,calc(var(--aqua-gloss) + 0.1)), rgba(255,255,255,0) 49%),
+    linear-gradient(
+      color-mix(in srgb, var(--destructive) 42%, #fff) 0,
+      color-mix(in srgb, var(--destructive) 82%, #fff) 49%,
+      color-mix(in srgb, var(--destructive) 94%, #000) 50%,
+      var(--destructive) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -6px 8px rgba(255,170,160,.45),
+    0 1px 3px rgba(120,20,15, calc(var(--aqua-shadow-strength) + 0.28));
+  text-shadow: 0 -1px 0 rgba(0,0,0,.3);
+}
+
+/* GHOST / LINK — chromeless */
+[data-skin="aqua"] .group\/button[data-variant="ghost"],
+[data-skin="aqua"] .group\/button[data-variant="link"] {
+  background: none; border-color: transparent; box-shadow: none; text-shadow: none;
+}
+[data-skin="aqua"] .group\/button[data-variant="ghost"]:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+[data-skin="aqua"] .group\/button[data-variant="link"] {
+  color: var(--primary); text-decoration: underline;
+}
+
+/* FOCUS (variant-aware) — keep each gel's inset glows under the blue halo */
+[data-skin="aqua"] .group\/button[data-variant="default"]:focus-visible {
+  outline: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.75),
+    inset 0 -6px 8px color-mix(in srgb, var(--aqua-gel-hi) 55%, transparent),
+    0 0 0 var(--aqua-focus-spread) var(--aqua-focus-ring);
+}
+[data-skin="aqua"] .group\/button[data-variant="destructive"]:focus-visible {
+  outline: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -6px 8px rgba(255,170,160,.45),
+    0 0 0 var(--aqua-focus-spread) var(--aqua-focus-ring);
+}
+[data-skin="aqua"] .group\/button[data-variant="ghost"]:focus-visible,
+[data-skin="aqua"] .group\/button[data-variant="link"]:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 var(--aqua-focus-spread) var(--aqua-focus-ring);
+}
+
+/* PRESSED — placed after every :focus-visible rule of equal specificity so a
+   Space-press on a keyboard-focused button shows the inset (cascade order). */
+[data-skin="aqua"] .group\/button:active:not(:disabled) {
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.22), var(--aqua-top-sheen);
+}
+
+/* DISABLED — flat matte, no gel, reads non-interactive.
+   Placed after (and doubled with [data-variant]) so it beats every variant rule. */
+[data-skin="aqua"] .group\/button:disabled,
+[data-skin="aqua"] .group\/button[data-variant]:disabled {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--border);
+  box-shadow: none;
+  text-shadow: none;
+  filter: none;
+}
+
+/* ---- Inputs ------------------------------------------------------------- */
+[data-skin="aqua"] [data-slot="input"],
+[data-skin="aqua"] [data-slot="textarea"],
+[data-skin="aqua"] [data-slot="select-trigger"],
+[data-skin="aqua"] .skin-select {
+  border: 1px solid var(--input);
+  border-radius: 7px;
+  background: var(--card);
+  box-shadow: var(--aqua-inset-well);
+}
+[data-skin="aqua"] [data-slot="input"]:focus-visible,
+[data-skin="aqua"] [data-slot="textarea"]:focus-visible,
+[data-skin="aqua"] [data-slot="select-trigger"]:focus-visible {
+  outline: 0;
+  border-color: var(--ring);
+  box-shadow:
+    var(--aqua-inset-well),
+    0 0 0 var(--aqua-focus-spread) var(--aqua-focus-ring);
+}
+
+/* ---- Surfaces ----------------------------------------------------------- */
+[data-skin="aqua"] [data-slot="card"] {
+  border: 1px solid var(--border);
+  border-radius: var(--aqua-radius-surface);
+  background: var(--aqua-pinstripe), var(--card);
+  box-shadow: var(--aqua-drop), var(--aqua-top-sheen);
+}
+
+[data-skin="aqua"] [data-slot="popover-content"],
+[data-skin="aqua"] [data-slot="dropdown-menu-content"],
+[data-skin="aqua"] [data-slot="context-menu-content"],
+[data-skin="aqua"] [data-slot="select-content"],
+[data-skin="aqua"] [data-slot="command"],
+[data-skin="aqua"] [data-slot="hover-card-content"],
+[data-skin="aqua"] [data-slot="dialog-content"],
+[data-skin="aqua"] [data-slot="alert-dialog-content"],
+[data-skin="aqua"] [data-slot="sheet-content"] {
+  border: 1px solid color-mix(in srgb, var(--border) 80%, #000 20%);
+  border-radius: var(--aqua-radius-surface);
+  background: var(--popover);
+  box-shadow: var(--aqua-drop-lg), var(--aqua-top-sheen);
+}
+/* Pinstripe header strips on dialogs/sheets (window-chrome cue) */
+[data-skin="aqua"] [data-slot="dialog-header"],
+[data-skin="aqua"] [data-slot="alert-dialog-header"],
+[data-skin="aqua"] [data-slot="sheet-header"] {
+  background: var(--aqua-pinstripe), var(--popover);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--aqua-top-sheen);
+}
+
+[data-skin="aqua"] [data-slot="tooltip-content"] {
+  border-radius: 7px; background: var(--aqua-helptag); color: #000; border: 1px solid var(--aqua-helptag-border);
+}
+[data-skin="aqua"] [data-slot="tooltip-content"] svg { fill: var(--aqua-helptag); }
+
+/* Selected/highlighted menu rows — glossy candy-blue gel + emboss */
+[data-skin="aqua"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="aqua"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="aqua"] [data-slot="select-item"][data-highlighted],
+[data-skin="aqua"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: 5px;
+  color: var(--primary-foreground);
+  background:
+    linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,0) 50%),
+    linear-gradient(var(--aqua-gel-hi) 0, var(--primary) 49%, var(--aqua-gel-lo) 50%, var(--aqua-gel-lo) 100%);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.28);
+}
+
+/* ---- Checkbox / radio — glassy gel, candy-blue checked ------------------ */
+[data-skin="aqua"] [data-slot="checkbox"] {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: linear-gradient(var(--card), color-mix(in srgb, var(--muted) 88%, var(--border)));
+  box-shadow: var(--aqua-inset-well);
+  color: var(--aqua-gel-lo);
+}
+[data-skin="aqua"] [data-slot="checkbox"][data-state="checked"] {
+  color: var(--primary-foreground);
+  border-color: color-mix(in srgb, var(--aqua-gel-lo) 70%, #000 30%);
+  background:
+    linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,0) 50%),
+    linear-gradient(var(--aqua-gel-hi) 0, var(--primary) 49%, var(--aqua-gel-lo) 50%, var(--aqua-gel-lo) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 5px color-mix(in srgb, var(--aqua-gel-hi) 55%, transparent);
+}
+[data-skin="aqua"] [data-slot="checkbox"]:focus-visible,
+[data-skin="aqua"] [data-slot="radio-group-item"]:focus-visible {
+  outline: 0; box-shadow: 0 0 0 var(--aqua-focus-spread) var(--aqua-focus-ring);
+}
+[data-skin="aqua"] [data-slot="radio-group-item"] {
+  border: 1px solid var(--border);
+  background: linear-gradient(var(--card), color-mix(in srgb, var(--muted) 88%, var(--border)));
+  box-shadow: var(--aqua-inset-well);
+  color: var(--aqua-gel-lo);
+}
+[data-skin="aqua"] [data-slot="radio-group-item"][data-state="checked"] {
+  border-color: color-mix(in srgb, var(--aqua-gel-lo) 70%, #000 30%);
+  background:
+    radial-gradient(circle at 50% 32%, rgba(255,255,255,.7), rgba(255,255,255,0) 55%),
+    linear-gradient(var(--aqua-gel-hi), var(--aqua-gel-lo));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 5px color-mix(in srgb, var(--aqua-gel-hi) 55%, transparent);
+}
+
+/* ---- Switch — gel track + glass-pearl thumb ------------------------------ */
+[data-skin="aqua"] [data-slot="switch"] {
+  border: 1px solid var(--border);
+  border-radius: var(--aqua-radius-control);
+  background: linear-gradient(var(--card), color-mix(in srgb, var(--muted) 88%, var(--border)));
+  box-shadow: var(--aqua-inset-well);
+  transition: background .15s ease, border-color .15s ease;
+}
+[data-skin="aqua"] [data-slot="switch"][data-state="checked"] {
+  border-color: color-mix(in srgb, var(--aqua-gel-lo) 70%, #000 30%);
+  background:
+    linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,0) 50%),
+    linear-gradient(var(--aqua-gel-hi) 0, var(--primary) 49%, var(--aqua-gel-lo) 50%, var(--aqua-gel-lo) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 5px color-mix(in srgb, var(--aqua-gel-hi) 55%, transparent);
+}
+[data-skin="aqua"] [data-slot="switch-thumb"] {
+  border: 1px solid var(--border);
+  background: radial-gradient(circle at 50% 30%, #fff, color-mix(in srgb, var(--card) 80%, var(--border)));
+  box-shadow:
+    var(--aqua-top-sheen),
+    0 1px 2px rgba(20,40,80, calc(var(--aqua-shadow-strength) + 0.18));
+}
+[data-skin="aqua"] [data-slot="switch"]:focus-visible {
+  outline: 0;
+  box-shadow:
+    var(--aqua-inset-well),
+    0 0 0 var(--aqua-focus-spread) var(--aqua-focus-ring);
+}
+
+/* ---- Tabs / badge / progress / slider ----------------------------------- */
+[data-skin="aqua"] [data-slot="tabs-list"] {
+  border-radius: var(--aqua-radius-control);
+  background: linear-gradient(
+    color-mix(in srgb, var(--secondary) 95%, var(--border)),
+    color-mix(in srgb, var(--secondary) 70%, var(--border)));
+  padding: 4px; gap: 3px; border: 1px solid var(--border);
+  box-shadow: var(--aqua-inset-well);
+}
+[data-skin="aqua"] [data-slot="tabs-trigger"] { border-radius: var(--aqua-radius-control); }
+[data-skin="aqua"] [data-slot="tabs-trigger"][data-state="active"] {
+  background:
+    linear-gradient(rgba(255,255,255,var(--aqua-gloss)), rgba(255,255,255,0) 49%),
+    linear-gradient(var(--card), color-mix(in srgb, var(--muted) 82%, var(--border)));
+  box-shadow: var(--aqua-top-sheen), 0 1px 2px rgba(20,40,80,.25);
+  font-weight: 600;
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+
+[data-skin="aqua"] [data-slot="badge"] {
+  border-radius: var(--aqua-radius-control);
+  border: 1px solid var(--border);
+  background: linear-gradient(var(--card), color-mix(in srgb, var(--muted) 88%, var(--border)));
+}
+[data-skin="aqua"] [data-slot="badge"][data-variant="default"] {
+  color: var(--primary-foreground);
+  border-color: color-mix(in srgb, var(--aqua-gel-lo) 70%, #000 30%);
+  background:
+    linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 50%),
+    linear-gradient(var(--aqua-gel-hi) 0, var(--primary) 49%, var(--aqua-gel-lo) 50%, var(--aqua-gel-lo) 100%);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.22);
+}
+[data-skin="aqua"] [data-slot="badge"][data-variant="secondary"] {
+  color: var(--secondary-foreground);
+  border-color: var(--border);
+  background:
+    linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0) 50%),
+    linear-gradient(
+      color-mix(in srgb, var(--secondary) 95%, var(--border)) 0,
+      color-mix(in srgb, var(--secondary) 80%, var(--border)) 49%,
+      color-mix(in srgb, var(--secondary) 60%, var(--border)) 50%,
+      color-mix(in srgb, var(--secondary) 45%, var(--border)) 100%);
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+[data-skin="aqua"] [data-slot="badge"][data-variant="outline"] {
+  color: var(--foreground);
+  border-color: var(--border);
+  background: rgba(255,255,255,.55);
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+[data-skin="aqua"] [data-slot="badge"][data-variant="destructive"] {
+  color: var(--primary-foreground);
+  border-color: color-mix(in srgb, var(--destructive) 65%, #000);
+  background:
+    linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 50%),
+    linear-gradient(
+      color-mix(in srgb, var(--destructive) 42%, #fff) 0,
+      color-mix(in srgb, var(--destructive) 82%, #fff) 49%,
+      color-mix(in srgb, var(--destructive) 94%, #000) 50%,
+      var(--destructive) 100%);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.22);
+}
+
+[data-skin="aqua"] [data-slot="progress"] {
+  border-radius: var(--aqua-radius-control);
+  background: linear-gradient(color-mix(in srgb, var(--muted) 85%, var(--border)), var(--card));
+  box-shadow: var(--aqua-inset-well);
+}
+[data-skin="aqua"] [data-slot="progress-indicator"] {
+  border-radius: var(--aqua-radius-control);
+  background:
+    linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0) 50%),
+    linear-gradient(var(--aqua-gel-hi), var(--primary));
+}
+
+[data-skin="aqua"] [data-slot="slider-track"] {
+  border-radius: var(--aqua-radius-control);
+  background: linear-gradient(color-mix(in srgb, var(--muted) 85%, var(--border)), var(--card));
+  box-shadow: var(--aqua-inset-well);
+}
+[data-skin="aqua"] [data-slot="slider-range"] {
+  border-radius: var(--aqua-radius-control);
+  background:
+    linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0) 50%),
+    linear-gradient(var(--aqua-gel-hi), var(--primary));
+}
+[data-skin="aqua"] [data-slot="slider-thumb"] {
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(circle at 50% 30%, #fff, color-mix(in srgb, var(--card) 80%, var(--border)));
+  box-shadow:
+    var(--aqua-top-sheen),
+    0 1px 2px rgba(20,40,80, calc(var(--aqua-shadow-strength) + 0.18));
+}
+
+/* ---- Scrollbar — gel pill thumb on a pinstripe gutter -------------------- */
+[data-skin="aqua"] ::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+[data-skin="aqua"] ::-webkit-scrollbar-track {
+  background: var(--aqua-pinstripe), var(--card);
+  border: 1px solid var(--border);
+}
+[data-skin="aqua"] ::-webkit-scrollbar-thumb {
+  border-radius: var(--aqua-radius-control);
+  border: 2px solid transparent;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,var(--aqua-gloss)), rgba(255,255,255,0) 49%) padding-box,
+    linear-gradient(90deg, var(--aqua-gel-hi), var(--aqua-gel-lo)) padding-box;
+}
+[data-skin="aqua"] ::-webkit-scrollbar-thumb:horizontal {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,var(--aqua-gloss)), rgba(255,255,255,0) 49%) padding-box,
+    linear-gradient(180deg, var(--aqua-gel-hi), var(--aqua-gel-lo)) padding-box;
+}
+[data-skin="aqua"] ::-webkit-scrollbar-corner {
+  background: var(--card);
+}

@@ -1,0 +1,66 @@
+/* ==========================================================================
+   "SKIN": XP — TOKENS ONLY   ·   [data-skin="xp-tokens"]
+   --------------------------------------------------------------------------
+   This is the XP *token* half and nothing else — exactly what a tweakcn theme
+   (or a shadcn registry:theme / cssVars) would produce: colors, radius 0, the
+   Tahoma font. NO bevels, NO window chrome, NO [data-slot] overrides.
+   It exists to show, side by side, that tokens alone get you a flat, square,
+   recolored shadcn — and that the XP *look* lives entirely in the overlay.
+   (See app/skins/xp.css for the overlay; theme-xp in registry.json for the
+   tweakcn-equivalent native theme.)
+   ========================================================================== */
+
+:root[data-skin="xp-tokens"] {
+  --app-font-sans: "Tahoma", "Verdana", "Geneva", "DejaVu Sans", "Segoe UI", sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "Lucida Console", "DejaVu Sans Mono", "Courier New", monospace;
+  --app-font-size: 13px;
+
+  --radius: 0px;
+
+  --background: #d4d0c8;
+  --foreground: #000000;
+  --card: #ece9d8;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #0a246a;
+  --primary-foreground: #ffffff;
+  --secondary: #ece9d8;
+  --secondary-foreground: #000000;
+  --muted: #d4d0c8;
+  --muted-foreground: #555555;
+  --accent: #316ac5;
+  --accent-foreground: #ffffff;
+  --destructive: #a40000;
+  --border: #808080;
+  --input: #808080;
+  --ring: #0a246a;
+  --chart-1: #0a246a;
+  --chart-2: #3a6ea5;
+  --chart-3: #1f8a1f;
+  --chart-4: #c08000;
+  --chart-5: #a40000;
+  --sidebar: #ece9d8;
+  --sidebar-foreground: #000000;
+  --sidebar-accent: #316ac5;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #808080;
+
+  /* Being maximally generous: also set tweakcn's full --shadow-* scale to the
+     hardest, most "XP" single shadow a token allows. NB: button/input/card use
+     NO shadow utility, so this only reaches popover/select/dropdown/tabs. */
+  --shadow-2xs: 1px 1px 0 0 #808080;
+  --shadow-xs: 1px 1px 0 0 #808080;
+  --shadow-sm: 1px 1px 0 0 #808080;
+  --shadow: 1px 1px 0 0 #808080;
+  --shadow-md: 2px 2px 0 0 #808080;
+  --shadow-lg: 2px 2px 0 0 #404040;
+  --shadow-xl: 3px 3px 0 0 #404040;
+  --shadow-2xl: 3px 3px 0 0 #404040;
+}
+
+[data-skin="xp-tokens"] body {
+  background: var(--background);
+  font-size: 13px;
+}

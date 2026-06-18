@@ -1,0 +1,111 @@
+/* ==========================================================================
+   SKIN: Base — generic, concept-free, fully tunable   ·   [data-skin="base"]
+   --------------------------------------------------------------------------
+   No concept. A set of UNIVERSAL structural dials, every one NEUTRAL at its
+   default, so all-default ≈ stock shadcn ("no skin"). Turn them up and you ADD
+   structure — bevel → skeuomorphic, border+elevation → brutalist-ish,
+   blur+low-opacity → glass-ish. The named concept skins are curated PRESETS of
+   this space plus their irreducible extras (chrome, scanlines, brackets).
+
+   Dials (all editable as sliders): --ui-border, --ui-bevel, --ui-elevation,
+   --ui-blur, --ui-surface, --ui-press  (+ --radius via the token editor).
+   ========================================================================== */
+
+:root[data-skin="base"] {
+  --radius: 10px;
+
+  /* Universal shape dials — neutral defaults (≈ stock). */
+  --ui-border: 1px;     /* control border width            */
+  --ui-bevel: 0;        /* 0 = flat, higher = 3D bevel      */
+  --ui-elevation: 0;    /* drop-shadow strength             */
+  --ui-blur: 0px;       /* backdrop frost                   */
+  --ui-surface: 1;      /* surface opacity (1 = solid)      */
+  --ui-press: 0px;      /* active translate depth           */
+
+  /* Composed recipes (derived from the dials). */
+  --ui-bevel-raise:
+    inset calc(var(--ui-bevel) * 1px) calc(var(--ui-bevel) * 1px) 0 0 rgba(255, 255, 255, 0.6),
+    inset calc(var(--ui-bevel) * -1px) calc(var(--ui-bevel) * -1px) 0 0 rgba(0, 0, 0, 0.3);
+  --ui-bevel-sink:
+    inset calc(var(--ui-bevel) * -1px) calc(var(--ui-bevel) * -1px) 0 0 rgba(255, 255, 255, 0.55),
+    inset calc(var(--ui-bevel) * 1px) calc(var(--ui-bevel) * 1px) 0 0 rgba(0, 0, 0, 0.3);
+  --ui-drop:
+    0 calc(var(--ui-elevation) * 1px) calc(var(--ui-elevation) * 2.4px) 0 rgba(0, 0, 0, 0.2);
+  --ui-frost: color-mix(in srgb, var(--card) calc(var(--ui-surface) * 100%), transparent);
+}
+
+/* ---- Shell surfaces (border + radius + elevation + frost) --------------- */
+[data-skin="base"] .app-bar,
+[data-skin="base"] .app-nav-inner,
+[data-skin="base"] .hero,
+[data-skin="base"] .specimen,
+[data-skin="base"] .app-status {
+  border: var(--ui-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--ui-frost);
+  box-shadow: var(--ui-drop);
+  -webkit-backdrop-filter: blur(var(--ui-blur));
+  backdrop-filter: blur(var(--ui-blur));
+}
+
+/* ---- Buttons (raised bevel + elevation + press) ------------------------- */
+[data-skin="base"] .group\/button {
+  border: var(--ui-border) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--ui-bevel-raise), var(--ui-drop);
+  -webkit-backdrop-filter: blur(var(--ui-blur));
+  backdrop-filter: blur(var(--ui-blur));
+  transition: transform 60ms ease;
+}
+[data-skin="base"] .group\/button:active:not(:disabled) {
+  transform: translate(var(--ui-press), var(--ui-press));
+  box-shadow: var(--ui-bevel-sink), var(--ui-drop);
+}
+
+/* ---- Fields (sunken bevel) --------------------------------------------- */
+[data-skin="base"] [data-slot="input"],
+[data-skin="base"] [data-slot="textarea"],
+[data-skin="base"] [data-slot="select-trigger"],
+[data-skin="base"] .skin-select {
+  border: var(--ui-border) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--ui-bevel-sink);
+}
+
+/* ---- Floating surfaces (elevation + frost) ----------------------------- */
+[data-skin="base"] [data-slot="popover-content"],
+[data-skin="base"] [data-slot="dropdown-menu-content"],
+[data-skin="base"] [data-slot="context-menu-content"],
+[data-skin="base"] [data-slot="select-content"],
+[data-skin="base"] [data-slot="command"],
+[data-skin="base"] [data-slot="hover-card-content"],
+[data-skin="base"] [data-slot="dialog-content"],
+[data-skin="base"] [data-slot="alert-dialog-content"],
+[data-skin="base"] [data-slot="sheet-content"],
+[data-skin="base"] [data-slot="card"] {
+  border: var(--ui-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--ui-frost);
+  box-shadow: var(--ui-drop);
+  -webkit-backdrop-filter: blur(calc(var(--ui-blur) * 1.4));
+  backdrop-filter: blur(calc(var(--ui-blur) * 1.4));
+}
+
+/* ---- Small controls follow the radius + border dials ------------------- */
+[data-skin="base"] [data-slot="checkbox"],
+[data-skin="base"] [data-slot="badge"],
+[data-skin="base"] [data-slot="tabs-trigger"],
+[data-skin="base"] [data-slot="progress"],
+[data-skin="base"] [data-slot="slider-track"] {
+  border-radius: calc(var(--radius) * 0.5);
+}
+[data-skin="base"] [data-slot="checkbox"] {
+  border: var(--ui-border) solid var(--border);
+  box-shadow: var(--ui-bevel-sink);
+}
+[data-skin="base"] [data-slot="slider-thumb"] {
+  box-shadow: var(--ui-bevel-raise), var(--ui-drop);
+}
+[data-skin="base"] [data-slot="tabs-list"] {
+  border-radius: var(--radius);
+}

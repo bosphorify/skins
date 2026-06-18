@@ -1,0 +1,508 @@
+/* ==========================================================================
+   SKIN: Synthwave   ·   [data-skin="synthwave"]
+   80s Outrun: deep purple sunset, neon magenta/cyan glow, perspective grid
+   horizon, chrome-glow geometric type. Pure CSS over stock shadcn.
+   ========================================================================== */
+
+:root[data-skin="synthwave"] {
+  --app-font-sans: "Orbitron", "Audiowide", "Rajdhani", system-ui, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "JetBrains Mono", monospace;
+  --app-font-size: 13px;
+
+  /* ---- Brand tokens (single source of truth — editor retunes the skin) ---- */
+  --radius: 6px;
+
+  --background: #1a0b2e;
+  --foreground: #ffe9ff;
+  --card: #241141;
+  --card-foreground: #ffe9ff;
+  --popover: #241141;
+  --popover-foreground: #ffe9ff;
+  --primary: #ff2bd6;            /* neon magenta */
+  --primary-foreground: #14001a;
+  --secondary: #2c1a52;
+  --secondary-foreground: #ffe9ff;
+  --muted: #2c1a52;
+  --muted-foreground: #c5aef0;   /* lifted for WCAG on dark purple */
+  --accent: #00e5ff;             /* neon cyan */
+  --accent-foreground: #001a1e;
+  --destructive: #ff4d6d;
+  --destructive-foreground: #1a0008;
+  --border: #7a3ff2;
+  --input: #4a2c8a;
+  --ring: #ff2bd6;
+  --chart-1: #ff2bd6;
+  --chart-2: #00e5ff;
+  --chart-3: #ffd000;
+  --chart-4: #7a3ff2;
+  --chart-5: #ff5470;
+  --sidebar: #241141;
+  --sidebar-foreground: #ffe9ff;
+  --sidebar-accent: #ff2bd6;
+  --sidebar-accent-foreground: #14001a;
+  --sidebar-border: #7a3ff2;
+
+  /* ======================= TUNABLE SHAPE KNOBS ============================ */
+  --sw-glow: 10px;            /* base neon glow radius — scales the whole skin */
+  --sw-radius: var(--radius); /* control corner radius (buttons/inputs/items) */
+  --sw-radius-lg: 12px;       /* surface corner radius (cards/dialogs/panels)  */
+  --sw-border-w: 1px;         /* neon outline weight across the system         */
+  --sw-panel-alpha: 0.62;     /* panel translucency — lets the sunset show     */
+  --sw-grid-size: 40px;       /* Outrun floor grid cell pitch                  */
+  --sw-grid-alpha: 0.5;       /* Outrun floor grid line opacity                */
+  --sw-scan: 0.05;            /* faint scanline overlay opacity                */
+
+  /* Composed neon helpers (built from the glow knob + brand tokens) */
+  --sw-glow-mag:  0 0 calc(var(--sw-glow) * 2) color-mix(in srgb, var(--primary) 55%, transparent);
+  --sw-glow-cyan: 0 0 calc(var(--sw-glow) * 2) color-mix(in srgb, var(--accent) 55%, transparent);
+  /* Derived shades (no new knobs — composed from brand tokens above) */
+  --sw-primary-deep: color-mix(in srgb, var(--primary) 80%, black);   /* deep magenta gradient stop */
+  --sw-field-bg: color-mix(in srgb, color-mix(in srgb, var(--background) 72%, black) 80%, transparent); /* shared field well */
+}
+
+/* ----------------------------------------------------------------------- */
+/* Body: sunset gradient + scanline veil. Grid horizon lives on ::before.   */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] body {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, var(--sw-scan)) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--background) 60%, black) 15%, transparent), var(--background) 62%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--primary) 35%, var(--background)) 0%,
+      color-mix(in srgb, var(--primary) 60%, var(--background)) 34%,
+      color-mix(in srgb, var(--primary) 75%, white) 49%,
+      color-mix(in srgb, var(--chart-5) 70%, white) 50%,
+      var(--background) 52%);
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Outrun neon floor: a perspective grid receding to the horizon line. */
+[data-skin="synthwave"] body::before {
+  content: "";
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  width: 240vw;
+  height: 52vh;
+  transform: translateX(-50%) perspective(40vh) rotateX(74deg);
+  transform-origin: bottom center;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 calc(var(--sw-grid-size) - 1px),
+      color-mix(in srgb, var(--primary) calc(var(--sw-grid-alpha) * 100%), transparent) calc(var(--sw-grid-size) - 1px) var(--sw-grid-size)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(var(--sw-grid-size) - 1px),
+      color-mix(in srgb, var(--accent) calc(var(--sw-grid-alpha) * 100%), transparent) calc(var(--sw-grid-size) - 1px) var(--sw-grid-size)
+    );
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 40%);
+  mask-image: linear-gradient(180deg, transparent, #000 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+[data-skin="synthwave"] .app-shell,
+[data-skin="synthwave"] .app-bar,
+[data-skin="synthwave"] .app-nav-inner,
+[data-skin="synthwave"] .hero,
+[data-skin="synthwave"] .specimen { position: relative; z-index: 1; }
+
+[data-skin="synthwave"] ::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Shell surfaces — translucent so the sunset & grid read through.          */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] .app-bar,
+[data-skin="synthwave"] .app-nav-inner,
+[data-skin="synthwave"] .hero,
+[data-skin="synthwave"] .specimen,
+[data-skin="synthwave"] .app-status {
+  background: color-mix(in srgb, var(--card) calc(var(--sw-panel-alpha) * 100%), transparent);
+  border: var(--sw-border-w) solid var(--border);
+  border-radius: var(--sw-radius-lg);
+  box-shadow:
+    0 0 calc(var(--sw-glow) * 2) color-mix(in srgb, var(--primary) 20%, transparent),
+    inset 0 0 calc(var(--sw-glow) * 2.2) color-mix(in srgb, var(--border) 14%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 30%, transparent);   /* cyan top-edge highlight */
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+[data-skin="synthwave"] .specimen-head {
+  border-bottom: var(--sw-border-w) solid var(--border);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 18%, transparent), transparent 70%);
+}
+[data-skin="synthwave"] .specimen-title {
+  color: var(--accent);
+  text-shadow: 0 0 var(--sw-glow) color-mix(in srgb, var(--accent) 55%, transparent);
+}
+[data-skin="synthwave"] .specimen-tag {
+  color: var(--muted-foreground);
+  font-family: var(--app-font-mono);
+  letter-spacing: .04em;
+}
+
+[data-skin="synthwave"] .hero {
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--secondary) 85%, transparent), var(--sw-field-bg));
+}
+[data-skin="synthwave"] .hero-kicker {
+  color: var(--accent);
+  text-shadow: 0 0 var(--sw-glow) var(--accent);
+  font-family: var(--app-font-mono);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+/* Chrome headline — classic Outrun gradient fill + magenta neon halo. */
+[data-skin="synthwave"] .hero-title {
+  font-family: var(--app-font-heading);
+  background: linear-gradient(180deg, var(--foreground) 0%, var(--accent) 45%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-shadow: 0 0 calc(var(--sw-glow) * 1.6) color-mix(in srgb, var(--primary) 70%, transparent);
+  letter-spacing: .04em;
+}
+[data-skin="synthwave"] .hero-sub { color: color-mix(in srgb, var(--border) 25%, var(--foreground)); }
+
+[data-skin="synthwave"] .app-nav a { border-radius: var(--sw-radius); }
+[data-skin="synthwave"] .app-nav a:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--sw-glow-mag);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Buttons — every variant distinct; neon outline kept on hover.            */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] .group\/button {
+  border: var(--sw-border-w) solid var(--primary);
+  border-radius: var(--sw-radius);
+  background: linear-gradient(color-mix(in srgb, var(--card) 70%, var(--border)), var(--card));
+  color: color-mix(in srgb, var(--primary) 55%, white);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 600;
+  box-shadow:
+    0 0 var(--sw-glow) color-mix(in srgb, var(--primary) 50%, transparent),
+    inset 0 0 calc(var(--sw-glow)) color-mix(in srgb, var(--primary) 15%, transparent);
+  transition: box-shadow .15s ease, filter .15s ease, color .15s ease;
+}
+/* Hover: keep the neon border, stack outer magenta + inner cyan glow. */
+[data-skin="synthwave"] .group\/button:hover {
+  color: var(--foreground);
+  box-shadow:
+    0 0 calc(var(--sw-glow) * 2.2) color-mix(in srgb, var(--primary) 80%, transparent),
+    inset 0 0 calc(var(--sw-glow) * 1.2) color-mix(in srgb, var(--accent) 45%, transparent);
+}
+[data-skin="synthwave"] .group\/button:active:not(:disabled) { filter: brightness(.9); }
+[data-skin="synthwave"] .group\/button:focus-visible {
+  outline: var(--sw-border-w) solid var(--ring);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 calc(var(--sw-glow) * 2) color-mix(in srgb, var(--ring) 65%, transparent),
+    0 0 var(--sw-glow) color-mix(in srgb, var(--ring) 45%, transparent);
+}
+/* Disabled: muted flat fill — no neon, no glow, clearly non-interactive. */
+[data-skin="synthwave"] .group\/button:disabled,
+[data-skin="synthwave"] .group\/button[data-variant]:disabled {
+  background: var(--muted);
+  border-color: var(--input);
+  color: var(--muted-foreground);
+  box-shadow: none;
+  text-shadow: none;
+  filter: none;
+}
+/* Disabled link stays a text link — no gray muted box. */
+[data-skin="synthwave"] .group\/button[data-variant="link"]:disabled {
+  background: none;
+  border-color: transparent;
+}
+
+/* default — solid magenta fill, dark ink label */
+[data-skin="synthwave"] .group\/button[data-variant="default"] {
+  background: linear-gradient(var(--primary), var(--sw-primary-deep));
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--sw-glow-mag), inset 0 1px 0 color-mix(in srgb, var(--foreground) 35%, transparent);
+}
+[data-skin="synthwave"] .group\/button[data-variant="default"]:hover { color: var(--primary-foreground); }
+
+/* secondary — cyan-outlined glass, distinct from the magenta default */
+[data-skin="synthwave"] .group\/button[data-variant="secondary"] {
+  background: linear-gradient(
+    color-mix(in srgb, var(--secondary) 80%, var(--accent)),
+    color-mix(in srgb, var(--secondary) 60%, black));
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow:
+    0 0 var(--sw-glow) color-mix(in srgb, var(--accent) 45%, transparent),
+    inset 0 0 var(--sw-glow) color-mix(in srgb, var(--accent) 12%, transparent);
+}
+[data-skin="synthwave"] .group\/button[data-variant="secondary"]:hover {
+  color: var(--foreground);
+  box-shadow:
+    0 0 calc(var(--sw-glow) * 2.2) color-mix(in srgb, var(--accent) 80%, transparent),
+    inset 0 0 calc(var(--sw-glow) * 1.2) color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+/* outline — transparent face, magenta neon frame only */
+[data-skin="synthwave"] .group\/button[data-variant="outline"] {
+  background: transparent;
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 var(--sw-glow) color-mix(in srgb, var(--primary) 35%, transparent);
+}
+[data-skin="synthwave"] .group\/button[data-variant="outline"]:hover {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--foreground);
+}
+
+/* destructive — red neon */
+[data-skin="synthwave"] .group\/button[data-variant="destructive"] {
+  background: linear-gradient(
+    color-mix(in srgb, var(--destructive) 18%, var(--background)),
+    color-mix(in srgb, var(--destructive) 10%, var(--background)));
+  border-color: var(--destructive);
+  color: color-mix(in srgb, var(--destructive) 55%, white);
+  box-shadow: 0 0 var(--sw-glow) color-mix(in srgb, var(--destructive) 50%, transparent);
+}
+[data-skin="synthwave"] .group\/button[data-variant="destructive"]:hover {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  box-shadow: 0 0 calc(var(--sw-glow) * 2.2) color-mix(in srgb, var(--destructive) 85%, transparent);
+}
+
+/* ghost — no chrome until hover */
+[data-skin="synthwave"] .group\/button[data-variant="ghost"] {
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  color: color-mix(in srgb, var(--primary) 55%, white);
+}
+[data-skin="synthwave"] .group\/button[data-variant="ghost"]:hover {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+/* link — plain cyan underline */
+[data-skin="synthwave"] .group\/button[data-variant="link"] {
+  border: 0;
+  box-shadow: none;
+  background: none;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-skin="synthwave"] .group\/button[data-variant="link"]:hover {
+  color: var(--foreground);
+  text-shadow: 0 0 var(--sw-glow) var(--accent);
+  box-shadow: none;
+}
+
+/* ----------------------------------------------------------------------- */
+/* Inputs                                                                   */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] [data-slot="input"],
+[data-skin="synthwave"] [data-slot="textarea"],
+[data-skin="synthwave"] [data-slot="select-trigger"],
+[data-skin="synthwave"] .skin-select {
+  border: var(--sw-border-w) solid var(--input);
+  border-radius: var(--sw-radius);
+  background: var(--sw-field-bg);
+  color: var(--foreground);
+}
+[data-skin="synthwave"] [data-slot="input"]:focus-visible,
+[data-skin="synthwave"] [data-slot="textarea"]:focus-visible,
+[data-skin="synthwave"] [data-slot="select-trigger"]:focus-visible,
+[data-skin="synthwave"] .skin-select:focus-visible {
+  outline: 0;
+  border-color: var(--ring);
+  box-shadow: 0 0 calc(var(--sw-glow) * 2) color-mix(in srgb, var(--ring) 55%, transparent);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Surfaces & overlays                                                      */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] [data-slot="card"] {
+  border: var(--sw-border-w) solid var(--border);
+  border-radius: var(--sw-radius-lg);
+  background: color-mix(in srgb, var(--card) calc(var(--sw-panel-alpha) * 100%), transparent);
+  box-shadow:
+    0 0 calc(var(--sw-glow) * 2) color-mix(in srgb, var(--primary) 20%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 28%, transparent);
+}
+[data-skin="synthwave"] [data-slot="popover-content"],
+[data-skin="synthwave"] [data-slot="dropdown-menu-content"],
+[data-skin="synthwave"] [data-slot="context-menu-content"],
+[data-skin="synthwave"] [data-slot="select-content"],
+[data-skin="synthwave"] [data-slot="command"],
+[data-skin="synthwave"] [data-slot="hover-card-content"],
+[data-skin="synthwave"] [data-slot="dialog-content"],
+[data-skin="synthwave"] [data-slot="alert-dialog-content"],
+[data-skin="synthwave"] [data-slot="sheet-content"] {
+  border: var(--sw-border-w) solid var(--primary);
+  border-radius: var(--sw-radius-lg);
+  background: var(--popover);
+  box-shadow:
+    0 0 calc(var(--sw-glow) * 3) color-mix(in srgb, var(--primary) 35%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 25%, transparent);
+}
+[data-skin="synthwave"] [data-slot="tooltip-content"] {
+  border: var(--sw-border-w) solid var(--accent);
+  border-radius: var(--sw-radius);
+  background: var(--accent-foreground);
+  color: var(--accent);
+  box-shadow: var(--sw-glow-cyan);
+}
+[data-skin="synthwave"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="synthwave"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="synthwave"] [data-slot="select-item"][data-highlighted],
+[data-skin="synthwave"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--sw-radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Selection controls                                                       */
+/* ----------------------------------------------------------------------- */
+/* Unchecked controls wear the quiet --input border; full-strength neon is
+   reserved for the checked state so the glow actually signals state. */
+[data-skin="synthwave"] [data-slot="checkbox"] {
+  border: var(--sw-border-w) solid var(--input);
+  border-radius: var(--sw-radius);
+  background: var(--sw-field-bg);
+  color: var(--primary-foreground);
+}
+[data-skin="synthwave"] [data-slot="checkbox"][data-state="checked"] {
+  border-color: var(--primary);
+  background: var(--primary);
+  box-shadow: var(--sw-glow-mag);
+}
+[data-skin="synthwave"] [data-slot="radio-group-item"] {
+  border: var(--sw-border-w) solid var(--input);
+  background: var(--sw-field-bg);
+  color: var(--primary);
+}
+[data-skin="synthwave"] [data-slot="radio-group-item"][data-state="checked"] {
+  border-color: var(--primary);
+  box-shadow: var(--sw-glow-mag);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Tabs                                                                     */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] [data-slot="tabs-list"] {
+  border-radius: var(--sw-radius-lg);
+  background: color-mix(in srgb, var(--sw-field-bg) 75%, transparent);
+  border: var(--sw-border-w) solid var(--input);
+  padding: 4px;
+  gap: 3px;
+}
+[data-skin="synthwave"] [data-slot="tabs-trigger"] {
+  border-radius: var(--sw-radius);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+[data-skin="synthwave"] [data-slot="tabs-trigger"][data-state="active"] {
+  background: linear-gradient(var(--primary), var(--sw-primary-deep));
+  color: var(--primary-foreground);
+  box-shadow: var(--sw-glow-mag);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Badges                                                                   */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] [data-slot="badge"] {
+  border-radius: var(--sw-radius);
+  border: var(--sw-border-w) solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  box-shadow: 0 0 var(--sw-glow) color-mix(in srgb, var(--accent) 35%, transparent);
+}
+[data-skin="synthwave"] [data-slot="badge"][data-variant="outline"] {
+  background: transparent;
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 var(--sw-glow) color-mix(in srgb, var(--accent) 35%, transparent);
+}
+[data-skin="synthwave"] [data-slot="badge"][data-variant="default"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--sw-glow-mag);
+}
+[data-skin="synthwave"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--secondary);
+  border-color: var(--border);
+  color: var(--secondary-foreground);
+  box-shadow: none;
+}
+[data-skin="synthwave"] [data-slot="badge"][data-variant="destructive"] {
+  background: var(--destructive);
+  border-color: var(--destructive);
+  color: var(--destructive-foreground);
+  box-shadow: 0 0 var(--sw-glow) color-mix(in srgb, var(--destructive) 50%, transparent);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Switch · progress · slider                                               */
+/* ----------------------------------------------------------------------- */
+[data-skin="synthwave"] [data-slot="switch"] {
+  border: var(--sw-border-w) solid var(--input);
+  border-radius: 999px;
+  background: var(--sw-field-bg);
+}
+[data-skin="synthwave"] [data-slot="switch"][data-state="checked"] {
+  border-color: var(--primary);
+  background: linear-gradient(90deg, var(--accent), var(--primary));
+  box-shadow: var(--sw-glow-mag);
+}
+/* Thumb: dim chrome puck at rest, white-hot neon pearl when checked. */
+[data-skin="synthwave"] [data-slot="switch-thumb"] {
+  background: var(--muted-foreground);
+  box-shadow: 0 0 calc(var(--sw-glow) * .6) color-mix(in srgb, var(--border) 45%, transparent);
+}
+[data-skin="synthwave"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: var(--foreground);
+  box-shadow: 0 0 var(--sw-glow) color-mix(in srgb, var(--primary) 70%, transparent);
+}
+[data-skin="synthwave"] [data-slot="progress"] {
+  border: var(--sw-border-w) solid var(--input);
+  border-radius: 999px;
+  background: var(--sw-field-bg);
+}
+[data-skin="synthwave"] [data-slot="progress-indicator"] {
+  background: linear-gradient(90deg, var(--accent), var(--primary));
+  box-shadow: var(--sw-glow-mag);
+}
+[data-skin="synthwave"] [data-slot="slider-track"] {
+  border: var(--sw-border-w) solid var(--input);
+  border-radius: 999px;
+  background: var(--sw-field-bg);
+}
+[data-skin="synthwave"] [data-slot="slider-range"] {
+  background: linear-gradient(90deg, var(--accent), var(--primary));
+  box-shadow: var(--sw-glow-mag);
+}
+[data-skin="synthwave"] [data-slot="slider-thumb"] {
+  border: 0;
+  background: var(--accent);
+  box-shadow: var(--sw-glow-cyan);
+}

@@ -1,0 +1,499 @@
+/* ==========================================================================
+   SKIN: Brutalist   ·   [data-skin="brutalist"]
+   Heavy black borders, chunky offset hard-shadows, uppercase grotesk type,
+   one loud accent, paper-grid texture, tilted sticker badges. Press = the
+   shadow collapses under the control. Pure CSS over stock shadcn.
+   ========================================================================== */
+
+
+:root[data-skin="brutalist"] {
+  --app-font-sans: "Space Grotesk", "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  --app-font-heading: "Archivo Black", "Space Grotesk", "Arial Black", sans-serif;
+  --app-font-mono: "Courier New", ui-monospace, monospace;
+  --app-font-size: 14px;
+
+  /* -------- Tunable shape knobs (editor sliders) ------------------------- */
+  --bru-offset: 4px;          /* hard drop-shadow distance */
+  --bru-border: 2px;          /* base control border width */
+  --bru-radius: 0px;          /* corner radius (dial in hard bevels) */
+  --bru-accent: #ffd400;      /* load-bearing brand accent */
+  --bru-shadow-color: var(--border); /* shadow tracks the ink token — retint once */
+  --bru-grid: 24px;           /* paper-grid texture spacing */
+  --bru-tilt: 1.5deg;         /* sticker tilt on badges */
+
+  /* Derived weights — shells get one step heavier than controls. */
+  --bru-border-shell: calc(var(--bru-border) + 1px);
+
+  --radius: var(--bru-radius);
+
+  --background: #f3f1ea;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --secondary: #ffffff;
+  --secondary-foreground: #0a0a0a;
+  --muted: #e8e5dc;
+  --muted-foreground: #3a3a3a;
+  --accent: var(--bru-accent);
+  --accent-foreground: #0a0a0a;
+  --destructive: #e60023;     /* white text ~4.8:1 — AA for the bold uppercase labels used */
+  --destructive-foreground: #ffffff;
+  --border: #0a0a0a;
+  --input: #0a0a0a;
+  --ring: #0a0a0a;
+  --chart-1: #0a0a0a;
+  --chart-2: var(--bru-accent);
+  --chart-3: var(--destructive);
+  --chart-4: #2563eb;
+  --chart-5: #9b9b9b;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-accent: var(--bru-accent);
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: #0a0a0a;
+
+  /* Hard offset shadows, composed from the offset knob via calc(). */
+  --shadow: var(--bru-offset) var(--bru-offset) 0 0 var(--bru-shadow-color);
+  --shadow-lg:
+    calc(var(--bru-offset) + 2px) calc(var(--bru-offset) + 2px) 0 0 var(--bru-shadow-color);
+  --shadow-xl:
+    calc(var(--bru-offset) + 4px) calc(var(--bru-offset) + 4px) 0 0 var(--bru-shadow-color);
+}
+
+/* Paper-grid texture: faint ruled lines break the orderly grid. */
+[data-skin="brutalist"] body {
+  background-color: var(--background);
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 calc(var(--bru-grid) - 1px),
+      color-mix(in srgb, var(--foreground) 5%, transparent) calc(var(--bru-grid) - 1px) var(--bru-grid)),
+    repeating-linear-gradient(90deg,
+      transparent 0 calc(var(--bru-grid) - 1px),
+      color-mix(in srgb, var(--foreground) 4%, transparent) calc(var(--bru-grid) - 1px) var(--bru-grid));
+}
+[data-skin="brutalist"] ::selection { background: var(--accent); color: var(--foreground); }
+
+/* ---- Shell -------------------------------------------------------------- */
+[data-skin="brutalist"] .app-bar {
+  background: var(--accent);
+  border: var(--bru-border-shell) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: none;
+}
+[data-skin="brutalist"] .app-brand {
+  font-family: var(--app-font-heading);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+[data-skin="brutalist"] .app-bar-controls label {
+  color: var(--foreground);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+[data-skin="brutalist"] .app-nav-inner {
+  border: var(--bru-border-shell) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: var(--card);
+}
+[data-skin="brutalist"] .app-nav-title {
+  font-family: var(--app-font-heading);
+  font-weight: 900;
+  color: var(--foreground);
+}
+[data-skin="brutalist"] .app-nav a {
+  border-radius: var(--radius);
+  font-weight: 600;
+  color: var(--foreground);
+}
+[data-skin="brutalist"] .app-nav a:hover { background: var(--accent); color: var(--accent-foreground); }
+
+[data-skin="brutalist"] .hero {
+  border: var(--bru-border-shell) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-xl);
+  background: var(--accent);
+}
+[data-skin="brutalist"] .hero-kicker {
+  color: var(--foreground);
+  font-family: var(--app-font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+[data-skin="brutalist"] .hero-title {
+  font-family: var(--app-font-heading);
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+}
+[data-skin="brutalist"] .hero-sub { color: var(--foreground); font-weight: 600; }
+
+[data-skin="brutalist"] .specimen {
+  border: var(--bru-border-shell) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  background: var(--card);
+}
+[data-skin="brutalist"] .specimen-head {
+  border-bottom: var(--bru-border-shell) solid var(--border);
+  background: var(--accent);
+}
+[data-skin="brutalist"] .specimen-title {
+  font-family: var(--app-font-heading);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+[data-skin="brutalist"] .specimen-tag {
+  color: var(--foreground);
+  font-family: var(--app-font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+/* 'Show code' chips on the yellow heads — bring them on-language. */
+[data-skin="brutalist"] .specimen-head button {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: calc(var(--bru-offset) / 2) calc(var(--bru-offset) / 2) 0 0 var(--bru-shadow-color);
+}
+[data-skin="brutalist"] .specimen-head button:hover {
+  transform: translate(calc(var(--bru-offset) / 4), calc(var(--bru-offset) / 4));
+  box-shadow: calc(var(--bru-offset) / 4) calc(var(--bru-offset) / 4) 0 0 var(--bru-shadow-color);
+}
+
+[data-skin="brutalist"] .app-status {
+  border: var(--bru-border-shell) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--foreground);
+}
+
+/* ---- Controls ----------------------------------------------------------- */
+/* Variant matrix:
+   default     = solid ink fill, white label
+   secondary   = white face, ink border (the base)
+   outline     = accent face, ink border
+   ghost       = no border / no shadow until hover
+   destructive = solid red fill, white label
+   link        = underline only, thick slab rule                              */
+[data-skin="brutalist"] .group\/button {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow);
+  transition: transform 60ms steps(2), box-shadow 60ms steps(2);
+}
+[data-skin="brutalist"] .group\/button:hover {
+  transform: translate(calc(var(--bru-offset) / 2), calc(var(--bru-offset) / 2));
+  box-shadow: calc(var(--bru-offset) / 2) calc(var(--bru-offset) / 2) 0 0 var(--bru-shadow-color);
+}
+[data-skin="brutalist"] .group\/button:active:not(:disabled) {
+  transform: translate(var(--bru-offset), var(--bru-offset));
+  box-shadow: 0 0 0 0 var(--bru-shadow-color);
+}
+[data-skin="brutalist"] .group\/button:focus-visible {
+  outline: var(--bru-border) solid var(--ring);
+  outline-offset: calc(var(--bru-offset) / 2);
+  box-shadow: var(--shadow), 0 0 0 calc(var(--bru-offset)) color-mix(in srgb, var(--ring) 25%, transparent);
+}
+
+/* Disabled = not pressable: the offset shadow IS the affordance, so kill it. */
+[data-skin="brutalist"] .group\/button:disabled,
+[data-skin="brutalist"] .group\/button[data-variant]:disabled {
+  box-shadow: none;
+  transform: none;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--muted-foreground);
+}
+
+[data-skin="brutalist"] .group\/button[data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+[data-skin="brutalist"] .group\/button[data-variant="default"]:hover {
+  background: var(--primary);
+  color: var(--accent);
+}
+
+[data-skin="brutalist"] .group\/button[data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+[data-skin="brutalist"] .group\/button[data-variant="secondary"]:hover { background: var(--muted); }
+
+[data-skin="brutalist"] .group\/button[data-variant="outline"] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+[data-skin="brutalist"] .group\/button[data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+[data-skin="brutalist"] .group\/button[data-variant="destructive"]:hover {
+  background: color-mix(in srgb, var(--destructive) 85%, var(--foreground));
+  color: var(--destructive-foreground);
+}
+
+[data-skin="brutalist"] .group\/button[data-variant="ghost"] {
+  background: transparent;
+  box-shadow: none;
+  border-color: transparent;
+}
+[data-skin="brutalist"] .group\/button[data-variant="ghost"]:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+  transform: none;
+}
+
+[data-skin="brutalist"] .group\/button[data-variant="link"] {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  text-transform: none;
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-thickness: calc(var(--bru-border) + 1px);
+  text-underline-offset: calc(var(--bru-border) + 1px);
+}
+[data-skin="brutalist"] .group\/button[data-variant="link"]:hover {
+  color: var(--destructive);
+  transform: none;
+}
+
+[data-skin="brutalist"] [data-slot="input"],
+[data-skin="brutalist"] [data-slot="textarea"],
+[data-skin="brutalist"] [data-slot="select-trigger"],
+[data-skin="brutalist"] .skin-select {
+  border: var(--bru-border) solid var(--input);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: inset 0 0 0 0 transparent;
+}
+[data-skin="brutalist"] [data-slot="input"]::placeholder,
+[data-skin="brutalist"] [data-slot="textarea"]::placeholder { color: var(--muted-foreground); }
+[data-skin="brutalist"] [data-slot="input"]:focus-visible,
+[data-skin="brutalist"] [data-slot="textarea"]:focus-visible,
+[data-skin="brutalist"] [data-slot="select-trigger"]:focus-visible {
+  outline: var(--bru-border) solid var(--ring);
+  outline-offset: calc(var(--bru-offset) / 2);
+  box-shadow: var(--shadow);
+}
+
+[data-skin="brutalist"] [data-slot="card"] {
+  border: var(--bru-border-shell) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-skin="brutalist"] [data-slot="popover-content"],
+[data-skin="brutalist"] [data-slot="dropdown-menu-content"],
+[data-skin="brutalist"] [data-slot="context-menu-content"],
+[data-skin="brutalist"] [data-slot="select-content"],
+[data-skin="brutalist"] [data-slot="command"],
+[data-skin="brutalist"] [data-slot="hover-card-content"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-lg);
+}
+[data-skin="brutalist"] [data-slot="tooltip-content"] {
+  border-radius: var(--radius);
+  border: var(--bru-border) solid var(--border);
+  background: var(--foreground);
+  color: var(--background);
+  font-weight: 700;
+}
+[data-skin="brutalist"] [data-slot="tooltip-content"] svg { fill: var(--foreground); }
+
+[data-skin="brutalist"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="brutalist"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="brutalist"] [data-slot="select-item"][data-highlighted],
+[data-skin="brutalist"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+[data-skin="brutalist"] [data-slot="dialog-content"],
+[data-skin="brutalist"] [data-slot="alert-dialog-content"],
+[data-skin="brutalist"] [data-slot="sheet-content"] {
+  border: var(--bru-border-shell) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-xl);
+}
+
+[data-skin="brutalist"] [data-slot="checkbox"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--primary-foreground);
+}
+/* Doubled state attr beats stock utility specificity: ink fill + white check. */
+[data-skin="brutalist"] [data-slot="checkbox"][data-state="checked"][data-state="checked"] {
+  background: var(--primary);
+  border-color: var(--border);
+  color: var(--primary-foreground);
+}
+[data-skin="brutalist"] [data-slot="checkbox"][data-state="checked"] svg { color: var(--primary-foreground); }
+[data-skin="brutalist"] [data-slot="radio-group-item"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: 9999px;
+  background: var(--card);
+  color: var(--foreground);
+}
+[data-skin="brutalist"] [data-slot="radio-group-item"][data-state="checked"][data-state="checked"] {
+  background: var(--accent);
+  color: var(--foreground);
+}
+[data-skin="brutalist"] [data-slot="radio-group-item"] [data-slot="radio-group-indicator"] svg {
+  fill: var(--foreground);
+}
+[data-skin="brutalist"] [data-slot="checkbox"]:focus-visible,
+[data-skin="brutalist"] [data-slot="radio-group-item"]:focus-visible,
+[data-skin="brutalist"] [data-slot="switch"]:focus-visible {
+  outline: var(--bru-border) solid var(--ring);
+  outline-offset: calc(var(--bru-offset) / 2);
+  box-shadow: 0 0 0 calc(var(--bru-offset)) color-mix(in srgb, var(--ring) 25%, transparent);
+}
+
+[data-skin="brutalist"] [data-slot="tabs-list"] { border-radius: var(--radius); background: transparent; gap: calc(var(--bru-offset)); }
+[data-skin="brutalist"] [data-slot="tabs-trigger"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+[data-skin="brutalist"] [data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Sticker badge — tilted off-grid for genuine neo-brutalist flavour. */
+[data-skin="brutalist"] [data-slot="badge"] {
+  border-radius: var(--radius);
+  border: var(--bru-border) solid var(--border);
+  font-weight: 800;
+  text-transform: uppercase;
+  transform: rotate(calc(-1 * var(--bru-tilt)));
+}
+[data-skin="brutalist"] [data-slot="badge"]:nth-child(even of [data-slot="badge"]) {
+  transform: rotate(var(--bru-tilt));
+}
+/* Variant stickers — each pair pulled straight from the token table.
+   Doubled [data-slot] beats stock utility specificity (same trick as the
+   checkbox state rule): default paints primary, the rest override it. */
+[data-skin="brutalist"] [data-slot="badge"][data-slot="badge"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+[data-skin="brutalist"] [data-slot="badge"][data-slot="badge"][class*="bg-secondary"] {
+  background: var(--muted);
+  color: var(--secondary-foreground);
+}
+[data-skin="brutalist"] [data-slot="badge"][data-slot="badge"][class*="text-foreground"] {
+  background: transparent;
+  color: var(--foreground);
+}
+[data-skin="brutalist"] [data-slot="badge"][data-slot="badge"][class*="bg-destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+/* Switch — white track OFF, accent track ON, ink thumb either way. */
+[data-skin="brutalist"] [data-slot="switch"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+}
+[data-skin="brutalist"] [data-slot="switch"][data-state="unchecked"] { background: var(--card); }
+[data-skin="brutalist"] [data-slot="switch"][data-state="checked"][data-state="checked"] {
+  background: var(--accent);
+}
+[data-skin="brutalist"] [data-slot="switch-thumb"] {
+  border-radius: var(--radius);
+  background: var(--foreground);
+  border: max(1px, calc(var(--bru-border) / 2)) solid var(--border);
+}
+[data-skin="brutalist"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: var(--primary);
+}
+
+[data-skin="brutalist"] [data-slot="progress"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+[data-skin="brutalist"] [data-slot="progress-indicator"] { border-radius: var(--radius); background: var(--primary); }
+
+[data-skin="brutalist"] [data-slot="slider-track"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+[data-skin="brutalist"] [data-slot="slider-range"] { background: var(--primary); }
+[data-skin="brutalist"] [data-slot="slider-thumb"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent);
+  box-shadow: calc(var(--bru-offset) / 2) calc(var(--bru-offset) / 2) 0 0 var(--bru-shadow-color);
+}
+
+[data-skin="brutalist"] [data-slot="alert"] {
+  border: var(--bru-border) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+[data-skin="brutalist"] [data-slot="table"] { border: var(--bru-border) solid var(--border); }
+[data-skin="brutalist"] [data-slot="table-head"],
+[data-skin="brutalist"] [data-slot="table-cell"] {
+  border-bottom: calc(var(--bru-border) / 2) solid var(--border);
+}
+[data-skin="brutalist"] [data-slot="table-head"] {
+  border-bottom: var(--bru-border) solid var(--border); /* header band gets the full control weight */
+  font-family: var(--app-font-heading);
+  text-transform: uppercase;
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Chart: bars get the signature chunky black outline (layer-3 SVG CSS). The
+   bar FILLS come free from the --chart-* tokens above. */
+[data-skin="brutalist"] [data-slot="chart"] .recharts-bar-rectangle path {
+  stroke: var(--border);
+  stroke-width: var(--bru-border);
+}
+[data-skin="brutalist"] [data-slot="chart"] .recharts-cartesian-axis-tick text {
+  font-weight: 700;
+  text-transform: uppercase;
+}

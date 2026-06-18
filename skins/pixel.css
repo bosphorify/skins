@@ -1,0 +1,413 @@
+/* ==========================================================================
+   SKIN: 8-bit Pixel   ·   [data-skin="pixel"]
+   NES.css-style stepped 3D pixel bevels (two-layer light/dark inset shadows),
+   chamfered multi-step pixel corners, Press Start 2P, flat retro palette,
+   pixelated rendering, press-to-shift, and a tunable CRT scanline overlay.
+   Pure CSS over stock shadcn. Every shape value is driven by a knob var.
+   ========================================================================== */
+
+:root[data-skin="pixel"] {
+  --app-font-sans: "Press Start 2P", "VT323", "Courier New", monospace;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "Press Start 2P", monospace;
+  --app-font-size: 10px;
+
+  --radius: 0px;
+
+  /* ---- Palette (DawnBringer-ish 8-bit) ---- */
+  --background: #1a1c2c;
+  --foreground: #f4f4f4;
+  --card: #29366f;
+  --card-foreground: #f4f4f4;
+  --popover: #29366f;
+  --popover-foreground: #f4f4f4;
+  --primary: #ef7d57;
+  --primary-foreground: #1a1c2c;
+  --secondary: #41a6f6;
+  --secondary-foreground: #1a1c2c;
+  --muted: #333c57;
+  --muted-foreground: #a7c0d4;
+  --accent: #38b764;
+  --accent-foreground: #1a1c2c;
+  --destructive: #b13e53;
+  --destructive-foreground: #f4f4f4;
+  --border: #f4f4f4;
+  --input: #f4f4f4;
+  --ring: #ffcd75;
+  --chart-1: #ef7d57;
+  --chart-2: #41a6f6;
+  --chart-3: #38b764;
+  --chart-4: #ffcd75;
+  --chart-5: #b13e53;
+  --sidebar: #29366f;
+  --sidebar-foreground: #f4f4f4;
+  --sidebar-accent: #38b764;
+  --sidebar-accent-foreground: #1a1c2c;
+  --sidebar-border: #f4f4f4;
+
+  /* ======================================================================
+     TUNABLE SHAPE KNOBS  (range-slider friendly)
+     ====================================================================== */
+  --px: 4px;                 /* pixel unit — base bevel / frame thickness   */
+  --px-step: 2px;            /* extra offset per stacked corner-notch layer */
+  /* Bevel hues derive from the palette tokens so retuning --muted-foreground /
+     --border automatically retunes the bevels (no stranded hex literals). */
+  --px-light: color-mix(in srgb, var(--border) 95%, #fff);            /* top/left bevel highlight (raised edge) */
+  --px-dark: color-mix(in srgb, var(--muted-foreground) 85%, var(--background));  /* bottom/right bevel shadow */
+  --px-input-border: color-mix(in srgb, var(--muted-foreground) 52%, var(--background)); /* sunken field bevel */
+  --scanline-opacity: 0.16;  /* CRT scanline strength (0 = off)            */
+
+  /* ----------------------------------------------------------------------
+     COMPOSED PRIMITIVES — built FROM the knobs, consumed across the skin.
+     ---------------------------------------------------------------------- */
+
+  /* Flat 1-pixel "frame" silhouette (chamfered: corners left open so the
+     stacked offsets read as notched 8-bit corners, not a smooth border). */
+  --px-frame:
+    calc(var(--px) * -1) 0 0 0 var(--border),
+    var(--px) 0 0 0 var(--border),
+    0 calc(var(--px) * -1) 0 0 var(--border),
+    0 var(--px) 0 0 var(--border);
+
+  /* Raised NES-style 3D bevel: inset light on top/left, inset dark on
+     bottom/right, plus a stacked outer frame at multiplied offsets so the
+     corner pixels step instead of rounding. */
+  --px-raised:
+    inset var(--px) var(--px) 0 0 color-mix(in srgb, var(--px-light) 45%, transparent),
+    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 0 color-mix(in srgb, var(--px-dark) 60%, transparent),
+    var(--px-frame),
+    calc(var(--px) + var(--px-step)) 0 0 0 var(--border),
+    calc((var(--px) + var(--px-step)) * -1) 0 0 0 var(--border),
+    0 calc(var(--px) + var(--px-step)) 0 0 var(--border),
+    0 calc((var(--px) + var(--px-step)) * -1) 0 0 var(--border);
+
+  /* Pressed state: swap the bevel — highlight pushed to bottom/right. */
+  --px-pressed:
+    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 0 color-mix(in srgb, var(--px-light) 35%, transparent),
+    inset var(--px) var(--px) 0 0 color-mix(in srgb, var(--px-dark) 70%, transparent),
+    var(--px-frame);
+
+  /* Sunken field bevel for inputs: dark inset top/left. */
+  --px-sunken:
+    inset var(--px) var(--px) 0 0 color-mix(in srgb, var(--px-input-border) 80%, transparent),
+    calc(var(--px) * -1) 0 0 0 var(--px-input-border),
+    var(--px) 0 0 0 var(--px-input-border),
+    0 calc(var(--px) * -1) 0 0 var(--px-input-border),
+    0 var(--px) 0 0 var(--px-input-border);
+}
+
+/* ============================ SHELL / GLOBAL ============================ */
+
+[data-skin="pixel"] body {
+  background: var(--background);
+  image-rendering: pixelated;
+  line-height: 1.6;
+  letter-spacing: 0;
+  position: relative;
+}
+
+/* Tunable CRT scanline overlay — gated by --scanline-opacity (set to 0 to
+   remove). repeating 1px transparent / 1px dark band over the whole screen. */
+[data-skin="pixel"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 1px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 1px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 2px
+  );
+}
+
+[data-skin="pixel"] ::selection { background: var(--ring); color: var(--background); }
+
+[data-skin="pixel"] .app-bar,
+[data-skin="pixel"] .app-nav-inner,
+[data-skin="pixel"] .specimen,
+[data-skin="pixel"] .app-status {
+  background: var(--card);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--px-frame);
+  margin: calc(var(--px) + var(--px-step));
+  backdrop-filter: none;
+}
+
+[data-skin="pixel"] .specimen-head { border-bottom: var(--px) solid var(--border); }
+[data-skin="pixel"] .specimen-title { color: var(--ring); }
+[data-skin="pixel"] .specimen-tag { color: var(--muted-foreground); }
+
+/* Hero as a lit pixel arcade panel — gradient + inset frame, not a black box */
+[data-skin="pixel"] .hero {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--secondary) 22%, var(--card)) 0%,
+      var(--card) 55%,
+      color-mix(in srgb, var(--background) 60%, var(--card)) 100%);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--px-frame);
+  margin: calc(var(--px) + var(--px-step));
+}
+[data-skin="pixel"] .hero-kicker { color: var(--accent); letter-spacing: 0; }
+[data-skin="pixel"] .hero-title { color: var(--ring); line-height: 1.5; }
+[data-skin="pixel"] .hero-sub { color: var(--muted-foreground); line-height: 1.7; }
+
+/* Nav: smaller pixel type + tighter padding so full labels fit on one line
+   (never clip text mid-word — Press Start 2P runs ~10px per glyph). */
+[data-skin="pixel"] .app-nav a {
+  border-radius: var(--radius);
+  letter-spacing: 0;
+  line-height: 1.5;
+  white-space: nowrap;
+  font-size: calc(var(--app-font-size) - 2px);
+  padding-inline: calc(var(--px) + var(--px-step));
+}
+[data-skin="pixel"] .app-nav a:hover { background: var(--accent); color: var(--accent-foreground); }
+
+/* ============================== BUTTONS ================================ */
+
+[data-skin="pixel"] .group\/button {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--px-raised);
+  transition: none;
+  /* Clearance matches the --px-raised outer frame extent (px + px-step),
+     mirroring the badge rule. */
+  margin: calc(var(--px) + var(--px-step));
+}
+[data-skin="pixel"] .group\/button:hover { filter: brightness(1.12); }
+
+/* Real pressed look: swap bevel layers AND drop into the well. */
+[data-skin="pixel"] .group\/button:active:not(:disabled) {
+  box-shadow: var(--px-pressed);
+  transform: translate(var(--px-step), var(--px-step));
+}
+[data-skin="pixel"] .group\/button:focus-visible {
+  outline: var(--px) dotted var(--ring);
+  outline-offset: calc(var(--px) + var(--px-step));
+}
+
+/* Four visually distinct variants ------------------------------------- */
+[data-skin="pixel"] .group\/button[data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+/* outline = transparent fill, white pixel frame only (no bevel fill) */
+[data-skin="pixel"] .group\/button[data-variant="outline"] {
+  background: transparent;
+  color: var(--foreground);
+  box-shadow: var(--px-frame);
+}
+[data-skin="pixel"] .group\/button[data-variant="outline"]:active:not(:disabled) {
+  box-shadow: var(--px-frame);
+}
+/* ghost = chromeless at rest (no bevel, no fill), muted fill on hover only —
+   distinct from outline's empty frame AND from the disabled muted block */
+[data-skin="pixel"] .group\/button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}
+[data-skin="pixel"] .group\/button[data-variant="ghost"]:hover {
+  background: var(--muted);
+}
+/* Ghost press: stay chromeless — the blanket :active --px-pressed would flash
+   a full white frame + bevel on the frameless variant. Keep the drop-in shift. */
+[data-skin="pixel"] .group\/button[data-variant="ghost"]:active:not(:disabled) {
+  box-shadow: none;
+  background: var(--muted);
+  transform: translate(var(--px-step), var(--px-step));
+}
+[data-skin="pixel"] .group\/button[data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+[data-skin="pixel"] .group\/button[data-variant="link"] {
+  box-shadow: none;
+  background: none;
+  margin: 0;
+  /* 80% mix toward white lifts contrast on the --card surface to AA for 10px text. */
+  color: color-mix(in srgb, var(--secondary) 80%, #fff);
+  text-decoration: underline;
+  text-underline-offset: var(--px-step);
+}
+[data-skin="pixel"] .group\/button[data-variant="link"]:active:not(:disabled) {
+  box-shadow: none;
+  transform: none;
+}
+
+/* Disabled: drop the raised bevel to a flat frame + muted fill so it no
+   longer reads as pressable. */
+[data-skin="pixel"] .group\/button:disabled {
+  box-shadow: var(--px-frame);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  filter: none;
+}
+
+/* =============================== INPUTS ================================ */
+
+[data-skin="pixel"] [data-slot="input"],
+[data-skin="pixel"] [data-slot="textarea"],
+[data-skin="pixel"] [data-slot="select-trigger"],
+[data-skin="pixel"] .skin-select {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--input);
+  color: var(--background);
+  box-shadow: var(--px-sunken);
+}
+[data-skin="pixel"] [data-slot="input"]::placeholder,
+[data-skin="pixel"] [data-slot="textarea"]::placeholder { color: var(--px-input-border); }
+[data-skin="pixel"] [data-slot="input"]:focus-visible,
+[data-skin="pixel"] [data-slot="textarea"]:focus-visible,
+[data-skin="pixel"] [data-slot="select-trigger"]:focus-visible {
+  outline: var(--px) dotted var(--ring);
+  /* Clear the 4px --px-sunken outer frame shadows so the dotted ring sits
+     outside the field chrome (matches the button focus offset). */
+  outline-offset: calc(var(--px) + var(--px-step));
+}
+
+/* ========================= SURFACES / OVERLAYS ========================= */
+
+[data-skin="pixel"] [data-slot="card"] {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--px-frame);
+}
+[data-skin="pixel"] [data-slot="popover-content"],
+[data-skin="pixel"] [data-slot="dropdown-menu-content"],
+[data-skin="pixel"] [data-slot="context-menu-content"],
+[data-skin="pixel"] [data-slot="select-content"],
+[data-skin="pixel"] [data-slot="command"],
+[data-skin="pixel"] [data-slot="hover-card-content"],
+[data-skin="pixel"] [data-slot="dialog-content"],
+[data-skin="pixel"] [data-slot="alert-dialog-content"],
+[data-skin="pixel"] [data-slot="sheet-content"] {
+  border: var(--px) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+}
+[data-skin="pixel"] [data-slot="tooltip-content"] {
+  border: var(--px) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+}
+[data-skin="pixel"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="pixel"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="pixel"] [data-slot="select-item"][data-highlighted],
+[data-skin="pixel"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* ===================== CHECKBOX / RADIO / SWITCH ====================== */
+
+[data-skin="pixel"] [data-slot="checkbox"] {
+  border: var(--px) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--accent);
+}
+[data-skin="pixel"] [data-slot="radio-group-item"] {
+  border: var(--px) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--accent);
+}
+[data-skin="pixel"] [data-slot="checkbox"][data-state="checked"] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+/* Checked radio = pixel-dot: a centered square accent dot inside a
+   background-colored gap ring, so square radios read as radios rather than
+   duplicating the checkbox's solid accent fill. */
+[data-skin="pixel"] [data-slot="radio-group-item"][data-state="checked"] {
+  background: var(--background);
+  box-shadow:
+    inset 0 0 0 var(--px) var(--background),
+    inset 0 0 0 100vmax var(--accent);
+}
+[data-skin="pixel"] [data-slot="switch"] {
+  border: var(--px) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+}
+[data-skin="pixel"] [data-slot="switch"][data-state="checked"] { background: var(--accent); }
+/* Square pixel thumb — the stock rounded thumb is the one curved shape on
+   the page and would break the zero-radius illusion. */
+[data-skin="pixel"] [data-slot="switch-thumb"] {
+  border-radius: var(--radius);
+  background: var(--background);
+  border: var(--px-step) solid var(--border);
+}
+[data-skin="pixel"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: var(--accent-foreground);
+}
+
+/* ============================ TABS / BARS ============================= */
+
+[data-skin="pixel"] [data-slot="tabs-list"] {
+  border-radius: var(--radius);
+  border-bottom: var(--px) solid var(--border);
+  gap: var(--px);
+}
+[data-skin="pixel"] [data-slot="tabs-trigger"] { border-radius: var(--radius); color: var(--muted-foreground); }
+[data-skin="pixel"] [data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--ring);
+  color: var(--background);
+}
+/* Badges: shadow-built frame needs clearance so adjacent badges don't crowd
+   (mirrors the button's margin pattern); colors are set per-variant so every
+   variant stays legible — no blanket primary-foreground ink. */
+[data-skin="pixel"] [data-slot="badge"] {
+  border-radius: var(--radius);
+  box-shadow: var(--px-frame);
+  margin: calc(var(--px) + var(--px-step));
+}
+[data-skin="pixel"] [data-slot="badge"][data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+[data-skin="pixel"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+[data-skin="pixel"] [data-slot="badge"][data-variant="outline"] {
+  background: transparent;
+  color: var(--foreground);
+}
+[data-skin="pixel"] [data-slot="badge"][data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+[data-skin="pixel"] [data-slot="progress"] {
+  border: var(--px) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+[data-skin="pixel"] [data-slot="progress-indicator"] { border-radius: var(--radius); background: var(--accent); }
+
+[data-skin="pixel"] [data-slot="slider-track"] {
+  border: var(--px) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+[data-skin="pixel"] [data-slot="slider-range"] { background: var(--primary); }
+[data-skin="pixel"] [data-slot="slider-thumb"] {
+  border: var(--px) solid var(--background);
+  border-radius: var(--radius);
+  background: var(--ring);
+}

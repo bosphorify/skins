@@ -1,0 +1,533 @@
+/* ==========================================================================
+   SKIN: Cyberpunk   ·   [data-skin="cyberpunk"]
+   Night City HUD: dark slate, neon cyan/magenta glow, chamfered corners,
+   scanline texture, gradient-border notches, techno mono.
+   Pure CSS over stock shadcn.
+   ========================================================================== */
+
+:root[data-skin="cyberpunk"] {
+  --app-font-sans: "Orbitron", "Rajdhani", "JetBrains Mono", system-ui, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "JetBrains Mono", monospace;
+  --app-font-size: 13px;
+
+  --radius: 0px;
+
+  --background: #0a0a12;
+  --foreground: #e7faff;
+  --card: #0f1320;
+  --card-foreground: #e7faff;
+  --popover: #0f1320;
+  --popover-foreground: #e7faff;
+  --primary: #00f0ff;
+  --primary-foreground: #04121a;
+  --secondary: #14182a;
+  --secondary-foreground: #e7faff;
+  --muted: #14182a;
+  --muted-foreground: #8ea3c4;
+  --accent: #ff2e97;
+  --accent-foreground: #14040e;
+  --destructive: #ff5470;
+  --destructive-foreground: #14040e;
+  --border: #2bd6e6;
+  --input: #28406a;
+  --ring: #00f0ff;
+  --chart-1: #00f0ff;
+  --chart-2: #ff2e97;
+  --chart-3: #f7ff2e;
+  --chart-4: #8a5cff;
+  --chart-5: #2effa3;
+  --sidebar: #0f1320;
+  --sidebar-foreground: #e7faff;
+  --sidebar-accent: #ff2e97;
+  --sidebar-accent-foreground: #14040e;
+  --sidebar-border: #2bd6e6;
+
+  /* ---- Tunable shape knobs (consumed below) ---- */
+  --cy-notch: 12px;        /* panel chamfer cut */
+  --cy-notch-sm: 8px;      /* button / control chamfer cut */
+  --cy-glow: 9px;          /* neon glow radius */
+  --cy-border-width: 1px;  /* universal hairline weight */
+  --cy-scanline: 0.05;     /* scanline overlay opacity (0 = off) */
+  --cy-scanline-size: 3px; /* scanline pitch (line repeats every N px) */
+  --cy-text-glow: 10px;    /* heading / label neon blur */
+
+  /* Derived surfaces routed through tokens */
+  --cy-bg: var(--background);
+  --cy-panel: var(--card);
+  --cy-edge: var(--primary);
+  --cy-well: color-mix(in srgb, var(--background) 60%, #000); /* recessed input/track well */
+
+  /* Panel chamfer (large notch) */
+  --cy-clip: polygon(
+    var(--cy-notch) 0, 100% 0,
+    100% calc(100% - var(--cy-notch)),
+    calc(100% - var(--cy-notch)) 100%,
+    0 100%, 0 var(--cy-notch)
+  );
+  /* Control chamfer (small notch) */
+  --cy-clip-sm: polygon(
+    var(--cy-notch-sm) 0, 100% 0,
+    100% calc(100% - var(--cy-notch-sm)),
+    calc(100% - var(--cy-notch-sm)) 100%,
+    0 100%, 0 var(--cy-notch-sm)
+  );
+
+  /* Reusable scanline texture (gated by --cy-scanline).
+     max() guards against a zero-length color stop when
+     --cy-scanline-size <= 1px. */
+  --cy-scanlines: repeating-linear-gradient(
+    0deg,
+    transparent 0 calc(max(var(--cy-scanline-size), 2px) - 1px),
+    color-mix(in srgb, var(--primary) calc(var(--cy-scanline) * 100%), transparent)
+      calc(max(var(--cy-scanline-size), 2px) - 1px) max(var(--cy-scanline-size), 2px)
+  );
+}
+
+/* Knob-scope fix: the composed vars above resolve their inner var()s at
+   :root, so a subtree override of --cy-notch / --cy-notch-sm / --cy-scanline
+   / --cy-scanline-size would silently do nothing. Re-declaring them on every
+   element makes each node recompute from its own inherited knob values, so
+   knob overrides cascade as documented. */
+[data-skin="cyberpunk"] * {
+  --cy-well: color-mix(in srgb, var(--background) 60%, #000);
+  --cy-bg: var(--background);
+  --cy-panel: var(--card);
+  --cy-edge: var(--primary);
+  --cy-clip: polygon(
+    var(--cy-notch) 0, 100% 0,
+    100% calc(100% - var(--cy-notch)),
+    calc(100% - var(--cy-notch)) 100%,
+    0 100%, 0 var(--cy-notch)
+  );
+  --cy-clip-sm: polygon(
+    var(--cy-notch-sm) 0, 100% 0,
+    100% calc(100% - var(--cy-notch-sm)),
+    calc(100% - var(--cy-notch-sm)) 100%,
+    0 100%, 0 var(--cy-notch-sm)
+  );
+  --cy-scanlines: repeating-linear-gradient(
+    0deg,
+    transparent 0 calc(max(var(--cy-scanline-size), 2px) - 1px),
+    color-mix(in srgb, var(--primary) calc(var(--cy-scanline) * 100%), transparent)
+      calc(max(var(--cy-scanline-size), 2px) - 1px) max(var(--cy-scanline-size), 2px)
+  );
+}
+
+[data-skin="cyberpunk"] body {
+  background: var(--cy-bg);
+  color: var(--foreground);
+}
+[data-skin="cyberpunk"] ::selection { background: var(--accent); color: var(--accent-foreground); }
+
+/* Glow is scoped to headings, titles and neon labels only — not every node */
+[data-skin="cyberpunk"] .hero-kicker,
+[data-skin="cyberpunk"] .hero-title,
+[data-skin="cyberpunk"] .specimen-title,
+[data-skin="cyberpunk"] [data-slot="tabs-trigger"][data-state="active"] {
+  text-shadow: 0 0 var(--cy-text-glow) currentColor;
+}
+
+/* ----- Shell surfaces ----- */
+[data-skin="cyberpunk"] .app-bar,
+[data-skin="cyberpunk"] .app-nav-inner,
+[data-skin="cyberpunk"] .hero,
+[data-skin="cyberpunk"] .specimen,
+[data-skin="cyberpunk"] .app-status {
+  position: relative;
+  background: var(--cy-panel);
+  border: var(--cy-border-width) solid var(--cy-edge);
+  border-radius: var(--radius);
+  clip-path: var(--cy-clip);
+  background-image: var(--cy-scanlines);
+  box-shadow:
+    0 0 calc(var(--cy-glow) * 1.6) color-mix(in srgb, var(--primary) 14%, transparent),
+    inset 0 0 calc(var(--cy-glow) * 2.4) color-mix(in srgb, var(--primary) 6%, transparent);
+  backdrop-filter: none;
+}
+
+/* Re-draw the neon edge OVER the clip so the angled cut keeps its glow.
+   clip-path crops the real border; a gradient-border pseudo restores it. */
+[data-skin="cyberpunk"] .app-bar::after,
+[data-skin="cyberpunk"] .specimen::after,
+[data-skin="cyberpunk"] .hero::after,
+[data-skin="cyberpunk"] [data-slot="card"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: var(--cy-clip);
+  padding: var(--cy-border-width);
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--accent) 60%, var(--primary)));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+
+[data-skin="cyberpunk"] .specimen-head {
+  position: relative;
+  border-bottom: var(--cy-border-width) solid var(--cy-edge);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 12%, transparent), transparent);
+}
+/* Magenta HUD accent bar across the panel header */
+[data-skin="cyberpunk"] .specimen-head::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--cy-border-width);
+  background: var(--accent);
+  box-shadow: 0 0 calc(var(--cy-glow) * 0.8) var(--accent);
+}
+[data-skin="cyberpunk"] .specimen-title { color: var(--primary); }
+[data-skin="cyberpunk"] .specimen-title::before { content: "▮ "; color: var(--accent); }
+[data-skin="cyberpunk"] .specimen-tag { color: var(--accent); }
+
+[data-skin="cyberpunk"] .hero { background: var(--cy-bg); }
+[data-skin="cyberpunk"] .hero-kicker { color: var(--primary); }
+[data-skin="cyberpunk"] .hero-title { color: var(--accent); }
+[data-skin="cyberpunk"] .hero-sub { color: color-mix(in srgb, var(--primary) 60%, var(--foreground)); }
+
+/* Showcase chrome toggles ('Show code' / 'Show the delta' / 'Customize'):
+   stock rounded gray pills break the zero-radius neon language, so bring
+   them on-concept as hairline cyan HUD buttons. */
+[data-skin="cyberpunk"] .code-toggle,
+[data-skin="cyberpunk"] .app-bar button:not(.group\/button),
+[data-skin="cyberpunk"] .specimen-head button:not(.group\/button) {
+  border-radius: var(--radius);
+  border: var(--cy-border-width) solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+[data-skin="cyberpunk"] .app-nav a { border-radius: var(--radius); }
+[data-skin="cyberpunk"] .app-nav a::before { content: "> "; color: var(--border); }
+[data-skin="cyberpunk"] .app-nav a:hover { background: var(--accent); color: var(--cy-bg); }
+
+/* ----- Buttons (notch now driven by --cy-notch-sm) -----
+   The real border is transparent: clip-path crops it and leaves a diagonal
+   stub at the notch. The edge is drawn instead by a masked ::after (same
+   technique as the panels) clipped to --cy-clip-sm, so the chamfer line is
+   continuous. currentColor keeps each variant's edge in its own neon. */
+[data-skin="cyberpunk"] .group\/button {
+  position: relative;
+  border: var(--cy-border-width) solid transparent;
+  border-radius: var(--radius);
+  clip-path: var(--cy-clip-sm);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 600;
+  transition: background .12s, color .12s, box-shadow .12s, transform .08s;
+  box-shadow:
+    0 0 var(--cy-glow) color-mix(in srgb, var(--primary) 50%, transparent),
+    inset 0 0 calc(var(--cy-glow) * 1.3) color-mix(in srgb, var(--primary) 12%, transparent);
+}
+[data-skin="cyberpunk"] .group\/button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: var(--cy-clip-sm);
+  padding: var(--cy-border-width);
+  background: currentColor;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+[data-skin="cyberpunk"] .group\/button:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 0 calc(var(--cy-glow) * 2) var(--primary);
+  transform: skewX(-2deg);
+}
+[data-skin="cyberpunk"] .group\/button:active:not(:disabled) {
+  background: color-mix(in srgb, var(--primary) 80%, var(--background));
+  transform: translateY(1px);
+}
+[data-skin="cyberpunk"] .group\/button:focus-visible {
+  /* negative offset keeps the ring inside the chamfer clip (a positive
+     offset would be cropped away by clip-path) */
+  outline: var(--cy-border-width) dashed var(--ring);
+  outline-offset: -3px;
+}
+
+/* Default = solid neon fill */
+[data-skin="cyberpunk"] .group\/button[data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+/* Secondary = magenta accent, distinct from cyan family (edge via ::after currentColor) */
+[data-skin="cyberpunk"] .group\/button[data-variant="secondary"] {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow:
+    0 0 var(--cy-glow) color-mix(in srgb, var(--accent) 50%, transparent),
+    inset 0 0 calc(var(--cy-glow) * 1.3) color-mix(in srgb, var(--accent) 12%, transparent);
+}
+[data-skin="cyberpunk"] .group\/button[data-variant="secondary"]:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  box-shadow: 0 0 calc(var(--cy-glow) * 2) var(--accent);
+}
+/* Outline = transparent, hairline cyan frame only (single ::after edge —
+   the old inset 0 0 0 ring doubled the chamfered border, so it is replaced
+   with a soft inset glow like the other variants) */
+[data-skin="cyberpunk"] .group\/button[data-variant="outline"] {
+  background: transparent;
+  color: var(--primary);
+  box-shadow: inset 0 0 calc(var(--cy-glow) * 1.3) color-mix(in srgb, var(--primary) 12%, transparent);
+}
+[data-skin="cyberpunk"] .group\/button[data-variant="outline"]:hover {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+}
+/* Destructive = neon red (edge via ::after currentColor) */
+[data-skin="cyberpunk"] .group\/button[data-variant="destructive"] {
+  color: var(--destructive);
+  background: color-mix(in srgb, var(--destructive) 10%, transparent);
+  box-shadow: 0 0 var(--cy-glow) color-mix(in srgb, var(--destructive) 50%, transparent);
+}
+[data-skin="cyberpunk"] .group\/button[data-variant="destructive"]:hover {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  box-shadow: 0 0 calc(var(--cy-glow) * 2) var(--destructive);
+}
+/* Ghost = bare */
+[data-skin="cyberpunk"] .group\/button[data-variant="ghost"] {
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  clip-path: none;
+}
+[data-skin="cyberpunk"] .group\/button[data-variant="ghost"]:hover {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+/* Link */
+[data-skin="cyberpunk"] .group\/button[data-variant="link"] {
+  border: 0; box-shadow: none; clip-path: none; background: none;
+  text-transform: none; color: var(--accent); text-decoration: underline;
+}
+/* The base :hover skew leaks onto the link variant (line-309 rule wins
+   background/color/box-shadow by source order but declares no transform) —
+   keep a plain text link unskewed on hover. */
+[data-skin="cyberpunk"] .group\/button[data-variant="link"]:hover {
+  transform: none;
+}
+/* Bare variants carry no chamfer frame */
+[data-skin="cyberpunk"] .group\/button[data-variant="ghost"]::after,
+[data-skin="cyberpunk"] .group\/button[data-variant="link"]::after {
+  content: none;
+}
+/* Disabled = powered down: muted fill, no glow, no neon edge */
+[data-skin="cyberpunk"] .group\/button:disabled,
+[data-skin="cyberpunk"] .group\/button[aria-disabled="true"] {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  box-shadow: none;
+  text-shadow: none;
+  transform: none;
+}
+[data-skin="cyberpunk"] .group\/button:disabled::after,
+[data-skin="cyberpunk"] .group\/button[aria-disabled="true"]::after {
+  background: color-mix(in srgb, var(--muted-foreground) 45%, transparent);
+}
+
+/* ----- Inputs ----- */
+[data-skin="cyberpunk"] [data-slot="input"],
+[data-skin="cyberpunk"] [data-slot="textarea"],
+[data-skin="cyberpunk"] [data-slot="select-trigger"],
+[data-skin="cyberpunk"] .skin-select {
+  border: var(--cy-border-width) solid var(--input);
+  border-radius: var(--radius);
+  background: var(--cy-well);
+  color: var(--foreground);
+  box-shadow: inset 0 0 calc(var(--cy-glow) * 1.1) color-mix(in srgb, var(--primary) 8%, transparent);
+}
+/* Hide the native light-gray resize grip, which reads as an artifact
+   in the dark well */
+[data-skin="cyberpunk"] [data-slot="textarea"] { resize: none; }
+[data-skin="cyberpunk"] [data-slot="input"]:focus-visible,
+[data-skin="cyberpunk"] [data-slot="textarea"]:focus-visible,
+[data-skin="cyberpunk"] [data-slot="select-trigger"]:focus-visible {
+  outline: 0;
+  border-color: var(--ring);
+  box-shadow: 0 0 calc(var(--cy-glow) * 1.1) color-mix(in srgb, var(--ring) 50%, transparent);
+}
+
+/* ----- Card ----- */
+[data-skin="cyberpunk"] [data-slot="card"] {
+  position: relative;
+  border: var(--cy-border-width) solid var(--cy-edge);
+  border-radius: var(--radius);
+  background: var(--cy-panel);
+  clip-path: var(--cy-clip);
+  background-image: var(--cy-scanlines);
+  box-shadow: 0 0 calc(var(--cy-glow) * 1.8) color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+/* ----- Overlays ----- */
+[data-skin="cyberpunk"] [data-slot="popover-content"],
+[data-skin="cyberpunk"] [data-slot="dropdown-menu-content"],
+[data-skin="cyberpunk"] [data-slot="context-menu-content"],
+[data-skin="cyberpunk"] [data-slot="select-content"],
+[data-skin="cyberpunk"] [data-slot="command"],
+[data-skin="cyberpunk"] [data-slot="hover-card-content"],
+[data-skin="cyberpunk"] [data-slot="dialog-content"],
+[data-skin="cyberpunk"] [data-slot="alert-dialog-content"],
+[data-skin="cyberpunk"] [data-slot="sheet-content"] {
+  border: var(--cy-border-width) solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--popover);
+  background-image: var(--cy-scanlines);
+  box-shadow: 0 0 calc(var(--cy-glow) * 2.6) color-mix(in srgb, var(--primary) 30%, transparent);
+}
+[data-skin="cyberpunk"] [data-slot="tooltip-content"] {
+  border: var(--cy-border-width) solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-foreground);
+  color: var(--accent);
+}
+[data-skin="cyberpunk"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="cyberpunk"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="cyberpunk"] [data-slot="select-item"][data-highlighted],
+[data-skin="cyberpunk"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--cy-bg);
+}
+
+/* ----- Selection controls ----- */
+[data-skin="cyberpunk"] [data-slot="checkbox"] {
+  border: var(--cy-border-width) solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--cy-well);
+  color: var(--primary-foreground);
+}
+[data-skin="cyberpunk"] [data-slot="checkbox"][data-state="checked"] {
+  background: var(--primary);
+  box-shadow: 0 0 var(--cy-glow) color-mix(in srgb, var(--primary) 60%, transparent);
+}
+[data-skin="cyberpunk"] [data-slot="radio-group-item"] {
+  border: var(--cy-border-width) solid var(--primary);
+  background: var(--cy-well);
+  color: var(--primary);
+}
+/* Checked radio lights up: neon halo + solid primary indicator dot */
+[data-skin="cyberpunk"] [data-slot="radio-group-item"][data-state="checked"] {
+  box-shadow: 0 0 var(--cy-glow) color-mix(in srgb, var(--primary) 60%, transparent);
+}
+[data-skin="cyberpunk"] [data-slot="radio-group-indicator"] {
+  color: var(--primary);
+}
+[data-skin="cyberpunk"] [data-slot="radio-group-indicator"] svg {
+  fill: var(--primary);
+  stroke: var(--primary);
+}
+
+/* ----- Tabs ----- */
+[data-skin="cyberpunk"] [data-slot="tabs-list"] {
+  border-radius: var(--radius);
+  border-bottom: var(--cy-border-width) solid var(--cy-edge);
+  gap: 0;
+}
+[data-skin="cyberpunk"] [data-slot="tabs-trigger"] {
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+[data-skin="cyberpunk"] [data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 0 calc(var(--cy-glow) * 1.3) color-mix(in srgb, var(--primary) 50%, transparent);
+}
+
+/* ----- Badges ----- */
+[data-skin="cyberpunk"] [data-slot="badge"] {
+  border-radius: var(--radius);
+  border: var(--cy-border-width) solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+}
+[data-skin="cyberpunk"] [data-slot="badge"][data-variant="default"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-foreground);
+}
+/* Secondary = magenta accent tint, distinct from the cyan outline pill */
+[data-skin="cyberpunk"] [data-slot="badge"][data-variant="secondary"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+/* Destructive = neon red warning */
+[data-skin="cyberpunk"] [data-slot="badge"][data-variant="destructive"] {
+  border-color: var(--destructive);
+  color: var(--destructive);
+  background: color-mix(in srgb, var(--destructive) 12%, transparent);
+}
+/* Outline keeps the bare cyan hairline but on the well surface for contrast */
+[data-skin="cyberpunk"] [data-slot="badge"][data-variant="outline"] {
+  border-color: color-mix(in srgb, var(--primary) 70%, transparent);
+  color: var(--foreground);
+  background: transparent;
+}
+
+/* ----- Switch / Progress / Slider ----- */
+[data-skin="cyberpunk"] [data-slot="switch"] {
+  border: var(--cy-border-width) solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--cy-well);
+}
+/* Checked = lit neon track; unchecked stays a dark well */
+[data-skin="cyberpunk"] [data-slot="switch"][data-state="checked"] {
+  background: var(--primary);
+  box-shadow: 0 0 var(--cy-glow) color-mix(in srgb, var(--primary) 60%, transparent);
+}
+/* Square HUD thumb, visible in both states */
+[data-skin="cyberpunk"] [data-slot="switch-thumb"] {
+  background: var(--foreground);
+  border-radius: 0;
+  box-shadow: 0 0 calc(var(--cy-glow) * 0.6) color-mix(in srgb, var(--primary) 40%, transparent);
+}
+[data-skin="cyberpunk"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: var(--primary-foreground);
+}
+[data-skin="cyberpunk"] [data-slot="switch"]:focus-visible,
+[data-skin="cyberpunk"] [data-slot="checkbox"]:focus-visible,
+[data-skin="cyberpunk"] [data-slot="radio-group-item"]:focus-visible {
+  outline: var(--cy-border-width) dashed var(--ring);
+  outline-offset: 2px;
+}
+[data-skin="cyberpunk"] [data-slot="progress"] {
+  border: var(--cy-border-width) solid var(--cy-edge);
+  border-radius: var(--radius);
+  background: var(--cy-well);
+}
+[data-skin="cyberpunk"] [data-slot="progress-indicator"] {
+  background: var(--primary);
+  box-shadow: 0 0 var(--cy-glow) var(--primary);
+}
+[data-skin="cyberpunk"] [data-slot="slider-track"] {
+  border: var(--cy-border-width) solid var(--cy-edge);
+  border-radius: var(--radius);
+  background: var(--cy-well);
+}
+[data-skin="cyberpunk"] [data-slot="slider-range"] {
+  background: var(--primary);
+  box-shadow: 0 0 var(--cy-glow) var(--primary);
+}
+[data-skin="cyberpunk"] [data-slot="slider-thumb"] {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--accent);
+  box-shadow: 0 0 var(--cy-glow) var(--accent);
+}

@@ -1,0 +1,465 @@
+/* ==========================================================================
+   SKIN: Editorial   ·   [data-skin="editorial"]
+   Ink on cream, refined serif, hairline rules, letterpress restraint. The
+   "newspaper / book" concept. Pure CSS over stock shadcn.
+
+   Knobs live in :root[data-skin="editorial"]; every literal hex/radius routes
+   through a token so the editor genuinely retunes the cascade. Shadows and
+   double-rules are composed from knob vars via calc().
+   ========================================================================== */
+
+:root[data-skin="editorial"] {
+  /* Typography: book serif for body/labels, display serif reserved for heads. */
+  --app-font-sans: "Iris", "Georgia", "Times New Roman", serif;
+  --app-font-heading: "Playfair Display", "Georgia", serif;
+  --app-font-mono: "Courier New", "Courier", monospace;
+  --app-font-size: 15px;
+
+  --radius: 2px;
+
+  --background: #f4efe3;
+  --foreground: #1c1812;
+  --card: #fbf8f0;
+  --card-foreground: #1c1812;
+  --popover: #fbf8f0;
+  --popover-foreground: #1c1812;
+  --primary: #1c1812;
+  --primary-foreground: #fbf8f0;
+  --secondary: #ece5d4;
+  --secondary-foreground: #1c1812;
+  --muted: #e7e0cf;
+  --muted-foreground: #585042;        /* darkened for WCAG on cream */
+  --accent: #8a1c1c;                  /* oxblood */
+  --accent-foreground: #fbf8f0;
+  --destructive: #8a1c1c;
+  --border: #c9bfa8;
+  --input: #b3a98f;
+  --ring: #8a1c1c;
+  --chart-1: #1c1812;
+  --chart-2: #8a1c1c;
+  --chart-3: #4a5a3a;
+  --chart-4: #9a7b2e;
+  --chart-5: #585042;
+  --sidebar: #fbf8f0;
+  --sidebar-foreground: #1c1812;
+  --sidebar-accent: #ece5d4;
+  --sidebar-accent-foreground: #1c1812;
+  --sidebar-border: #c9bfa8;
+
+  /* ---- Tunable shape knobs (range-slider friendly) ---------------------- */
+  --ed-rule: 1px;                 /* hairline rule weight                     */
+  --ed-rule-heavy: 2px;           /* masthead / section-head / tabs rule      */
+  --ed-radius: var(--radius);     /* corner softness (kept tight for print)   */
+  --ed-shadow-offset: 4px;        /* letterpress drop offset                  */
+  --ed-press-depth: 0.10;         /* letterpress shadow opacity (0..1)        */
+  --ed-tracking: 0.08em;          /* small-caps / label letterspacing         */
+  --ed-tab-underline: 3px;        /* active tab accent underline              */
+  --ed-accent-weight: 3px;        /* accent hairline thickness on heads       */
+
+  /* ---- Composed (derived from knobs) ------------------------------------ */
+  --ed-ink: var(--foreground);
+  --ed-press: color-mix(in srgb, var(--foreground) calc(var(--ed-press-depth) * 100%), transparent);
+  --ed-press-soft: color-mix(in srgb, var(--foreground) calc(var(--ed-press-depth) * 60%), transparent);
+  /* Subtle consistent letterpress lift for panels/cards */
+  --ed-shadow: calc(var(--ed-shadow-offset) / 4) calc(var(--ed-shadow-offset) / 2) 0 0 var(--ed-press-soft);
+  /* Hard offset drop for floating surfaces */
+  --ed-shadow-pop: var(--ed-shadow-offset) var(--ed-shadow-offset) 0 0 var(--ed-press);
+  /* Faint paper grain — laid-paper hairlines, knob-tinted */
+  --ed-grain:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent calc(var(--app-font-size) * 1.6 - 1px),
+      var(--ed-press-soft) calc(var(--app-font-size) * 1.6 - 1px),
+      var(--ed-press-soft) calc(var(--app-font-size) * 1.6)
+    );
+}
+
+[data-skin="editorial"] body {
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, var(--card) 55%, transparent), transparent 60%),
+    var(--ed-grain),
+    var(--background);
+}
+[data-skin="editorial"] ::selection { background: var(--foreground); color: var(--background); }
+
+/* ---- Masthead -------------------------------------------------------------
+   Double-rule under the brand, like a newspaper nameplate. The double rule is
+   composed from --ed-rule-heavy via box-shadow so the gap scales with the knob. */
+[data-skin="editorial"] .app-bar {
+  background:
+    linear-gradient(to bottom, var(--card), color-mix(in srgb, var(--card) 92%, var(--foreground)));
+  border: 0;
+  border-bottom: var(--ed-rule-heavy) solid var(--foreground);
+  box-shadow:
+    0 calc(var(--ed-rule-heavy) + var(--ed-rule) * 2) 0 calc(-1 * var(--ed-rule-heavy)) var(--card),
+    0 calc(var(--ed-rule-heavy) + var(--ed-rule) * 2 + var(--ed-rule)) 0 calc(-1 * var(--ed-rule-heavy)) var(--foreground);
+  border-radius: 0;
+  backdrop-filter: none;
+}
+[data-skin="editorial"] .app-brand {
+  font-family: var(--app-font-heading);
+  font-weight: 800;
+  letter-spacing: -.01em;
+  font-feature-settings: "liga" 1, "dlig" 1;
+}
+
+[data-skin="editorial"] .app-nav-inner,
+[data-skin="editorial"] .specimen,
+[data-skin="editorial"] .app-status {
+  background: var(--card);
+  border: var(--ed-rule) solid var(--border);
+  border-radius: var(--ed-radius);
+  box-shadow: var(--ed-shadow);
+}
+
+/* Section head: heavy top rule + oxblood accent hairline = print column head. */
+[data-skin="editorial"] .specimen-head {
+  border-bottom: var(--ed-rule-heavy) solid var(--foreground);
+  box-shadow: 0 var(--ed-accent-weight) 0 calc(-1 * (var(--ed-accent-weight) - var(--ed-rule))) var(--accent);
+  position: relative;
+}
+[data-skin="editorial"] .specimen-title {
+  font-family: var(--app-font-heading);
+  font-weight: 800;
+  font-size: calc(var(--app-font-size) * 1.2);
+  letter-spacing: -.01em;
+}
+[data-skin="editorial"] .specimen-tag {
+  font-style: italic;
+  color: var(--muted-foreground);
+  font-family: var(--app-font-mono);
+}
+
+/* Microlabels ("variants", "sizes & icons", "checkbox") → print section heads */
+[data-skin="editorial"] .specimen .specimen-row > .specimen-label,
+[data-skin="editorial"] .specimen-sublabel,
+[data-skin="editorial"] .specimen small,
+[data-skin="editorial"] .specimen figcaption {
+  font-variant: small-caps;
+  letter-spacing: var(--ed-tracking);
+  color: var(--muted-foreground);
+}
+
+/* ---- Hero / pull-quote block --------------------------------------------- */
+[data-skin="editorial"] .hero {
+  background:
+    linear-gradient(135deg, var(--foreground), color-mix(in srgb, var(--foreground) 84%, var(--accent)));
+  border: var(--ed-rule) solid var(--foreground);
+  border-radius: var(--ed-radius);
+  box-shadow: var(--ed-shadow-pop);
+}
+[data-skin="editorial"] .hero-kicker {
+  color: color-mix(in srgb, var(--accent) 45%, var(--secondary));
+  font-style: italic;
+  font-family: var(--app-font-mono);
+  letter-spacing: var(--ed-tracking);
+  text-transform: uppercase;
+}
+[data-skin="editorial"] .hero-title {
+  color: var(--card);
+  font-family: var(--app-font-heading);
+}
+/* Editorial drop-cap on the lede */
+[data-skin="editorial"] .hero-sub { color: color-mix(in srgb, var(--card) 80%, var(--accent)); }
+[data-skin="editorial"] .hero-sub::first-letter {
+  font-family: var(--app-font-heading);
+  font-size: 3.2em;
+  line-height: .8;
+  float: left;
+  padding: 0.05em 0.12em 0 0;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+[data-skin="editorial"] .app-nav a {
+  border-radius: 0;
+  border-bottom: var(--ed-rule) solid var(--muted);
+}
+[data-skin="editorial"] .app-nav a:hover { background: var(--foreground); color: var(--card); }
+
+/* ==========================================================================
+   BUTTONS — five visually distinct variants
+   ========================================================================== */
+[data-skin="editorial"] .group\/button {
+  border: var(--ed-rule) solid var(--ed-ink);
+  border-radius: var(--ed-radius);
+  background: transparent;
+  color: var(--foreground);
+  font-weight: 600;
+  box-shadow: none;
+  letter-spacing: .02em;
+}
+[data-skin="editorial"] .group\/button:hover { background: var(--foreground); color: var(--card); }
+[data-skin="editorial"] .group\/button:active:not(:disabled) {
+  background: color-mix(in srgb, var(--foreground) 80%, var(--card));
+  color: var(--card);
+  border-color: var(--foreground);
+  box-shadow: inset 0 var(--ed-rule-heavy) 0 0 var(--ed-press);
+}
+[data-skin="editorial"] .group\/button:focus-visible {
+  outline: var(--ed-rule-heavy) solid color-mix(in srgb, var(--ring) 70%, transparent);
+  outline-offset: calc(var(--ed-rule) * 2);
+}
+
+/* disabled — flat unprinted gray, no lift, clearly non-interactive */
+[data-skin="editorial"] .group\/button:disabled,
+[data-skin="editorial"] .group\/button[data-variant]:disabled {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--border);
+  box-shadow: none;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* default — solid ink, letterpress lift */
+[data-skin="editorial"] .group\/button[data-variant="default"] {
+  background: var(--foreground);
+  color: var(--card);
+  box-shadow: var(--ed-shadow);
+}
+[data-skin="editorial"] .group\/button[data-variant="default"]:hover {
+  background: color-mix(in srgb, var(--foreground) 82%, var(--card));
+}
+
+/* secondary — filled cream chip, hairline border */
+[data-skin="editorial"] .group\/button[data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: var(--border);
+  box-shadow: var(--ed-shadow);
+}
+[data-skin="editorial"] .group\/button[data-variant="secondary"]:hover {
+  background: color-mix(in srgb, var(--secondary) 80%, var(--foreground));
+}
+
+/* outline — open ruled box on muted ground */
+[data-skin="editorial"] .group\/button[data-variant="outline"] {
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  color: var(--foreground);
+  border: var(--ed-rule) solid var(--input);
+}
+[data-skin="editorial"] .group\/button[data-variant="outline"]:hover {
+  background: var(--secondary);
+  border-color: var(--foreground);
+}
+
+/* ghost — borderless, accent on hover */
+[data-skin="editorial"] .group\/button[data-variant="ghost"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--foreground);
+}
+[data-skin="editorial"] .group\/button[data-variant="ghost"]:hover {
+  background: var(--muted);
+  color: var(--accent);
+}
+
+/* destructive — oxblood, distinct from ink */
+[data-skin="editorial"] .group\/button[data-variant="destructive"] {
+  border-color: var(--destructive);
+  color: var(--destructive);
+  background: transparent;
+}
+[data-skin="editorial"] .group\/button[data-variant="destructive"]:hover {
+  background: var(--destructive);
+  color: var(--accent-foreground);
+}
+
+/* link — underlined oxblood */
+[data-skin="editorial"] .group\/button[data-variant="link"] {
+  border: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: calc(var(--ed-rule) * 3);
+  text-decoration-thickness: var(--ed-rule);
+}
+[data-skin="editorial"] .group\/button[data-variant="link"]:hover {
+  background: transparent;
+  text-decoration-thickness: var(--ed-rule-heavy);
+}
+
+/* ==========================================================================
+   FORM FIELDS — ruled-line inputs
+   ========================================================================== */
+[data-skin="editorial"] [data-slot="input"],
+[data-skin="editorial"] [data-slot="textarea"],
+[data-skin="editorial"] [data-slot="select-trigger"],
+[data-skin="editorial"] .skin-select {
+  border: 0;
+  border-bottom: var(--ed-rule) solid var(--ed-ink);
+  border-radius: 0;
+  background: transparent;
+}
+[data-skin="editorial"] [data-slot="textarea"] { resize: vertical; }
+[data-skin="editorial"] [data-slot="input"]:focus-visible,
+[data-skin="editorial"] [data-slot="textarea"]:focus-visible,
+[data-skin="editorial"] [data-slot="select-trigger"]:focus-visible {
+  outline: 0;
+  border-bottom-color: var(--ring);
+  box-shadow: 0 var(--ed-rule) 0 0 color-mix(in srgb, var(--ring) 80%, transparent);
+}
+/* disabled — dotted unprinted rule, clearly non-editable */
+[data-skin="editorial"] [data-slot="input"]:disabled,
+[data-skin="editorial"] [data-slot="textarea"]:disabled,
+[data-skin="editorial"] [data-slot="select-trigger"]:disabled {
+  border-bottom: var(--ed-rule) dotted var(--input);
+  color: var(--muted-foreground);
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   SURFACES
+   ========================================================================== */
+[data-skin="editorial"] [data-slot="card"] {
+  border: var(--ed-rule) solid var(--border);
+  border-radius: var(--ed-radius);
+  background: var(--card);
+  box-shadow: var(--ed-shadow);
+}
+
+/* Floating surfaces: ink hairline + hard letterpress drop */
+[data-skin="editorial"] [data-slot="popover-content"],
+[data-skin="editorial"] [data-slot="dropdown-menu-content"],
+[data-skin="editorial"] [data-slot="context-menu-content"],
+[data-skin="editorial"] [data-slot="select-content"],
+[data-skin="editorial"] [data-slot="command"],
+[data-skin="editorial"] [data-slot="hover-card-content"],
+[data-skin="editorial"] [data-slot="dialog-content"],
+[data-skin="editorial"] [data-slot="alert-dialog-content"],
+[data-skin="editorial"] [data-slot="sheet-content"] {
+  border: var(--ed-rule) solid var(--foreground);
+  border-radius: var(--ed-radius);
+  background:
+    linear-gradient(to bottom, var(--card), color-mix(in srgb, var(--card) 94%, var(--foreground)));
+  box-shadow: var(--ed-shadow-pop);
+}
+
+[data-skin="editorial"] [data-slot="tooltip-content"] {
+  border-radius: var(--ed-radius);
+  background: var(--foreground);
+  color: var(--card);
+  font-style: italic;
+}
+
+[data-skin="editorial"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="editorial"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="editorial"] [data-slot="select-item"][data-highlighted],
+[data-skin="editorial"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: 0;
+  background: var(--foreground);
+  color: var(--card);
+}
+
+/* ==========================================================================
+   CONTROLS
+   ========================================================================== */
+[data-skin="editorial"] [data-slot="checkbox"] {
+  border: var(--ed-rule) solid var(--ed-ink);
+  border-radius: calc(var(--ed-radius) / 2);
+}
+[data-skin="editorial"] [data-slot="checkbox"][data-state="checked"] {
+  background: var(--foreground);
+  border-color: var(--foreground);
+}
+[data-skin="editorial"] [data-slot="checkbox"]:focus-visible,
+[data-skin="editorial"] [data-slot="switch"]:focus-visible {
+  outline: var(--ed-rule-heavy) solid color-mix(in srgb, var(--ring) 70%, transparent);
+  outline-offset: calc(var(--ed-rule) * 2);
+}
+
+/* Switch — unchecked: open ruled track on muted ground; checked: solid ink. */
+[data-skin="editorial"] [data-slot="switch"] {
+  border: var(--ed-rule) solid var(--ed-ink);
+  border-radius: var(--ed-radius);
+  background: var(--muted);
+  box-shadow: inset 0 var(--ed-rule) 0 0 var(--ed-press-soft);
+}
+[data-skin="editorial"] [data-slot="switch"][data-state="checked"] {
+  background: var(--foreground);
+  border-color: var(--foreground);
+  box-shadow: none;
+}
+[data-skin="editorial"] [data-slot="switch-thumb"] {
+  border: var(--ed-rule) solid var(--foreground);
+  border-radius: calc(var(--ed-radius) / 2);
+  background: var(--card);
+  box-shadow: var(--ed-shadow);
+}
+[data-skin="editorial"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  border-color: var(--card);
+  background: var(--card);
+}
+
+[data-skin="editorial"] [data-slot="tabs-list"] {
+  border-radius: 0;
+  border-bottom: var(--ed-rule-heavy) solid var(--foreground);
+  gap: 0;
+  background: transparent;
+}
+[data-skin="editorial"] [data-slot="tabs-trigger"] {
+  border-radius: 0;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+[data-skin="editorial"] [data-slot="tabs-trigger"][data-state="active"] {
+  box-shadow: inset 0 calc(-1 * var(--ed-tab-underline)) 0 0 var(--accent);
+  font-weight: 700;
+  font-style: normal;
+  color: var(--foreground);
+}
+
+[data-skin="editorial"] [data-slot="badge"] {
+  border-radius: calc(var(--ed-radius) / 2);
+  border: var(--ed-rule) solid var(--foreground);
+  background: transparent;
+  color: var(--foreground);
+  text-transform: uppercase;
+  font-family: var(--app-font-mono);
+  font-size: calc(var(--app-font-size) * 0.67);
+  letter-spacing: var(--ed-tracking);
+}
+[data-skin="editorial"] [data-slot="badge"][data-variant="default"] {
+  background: var(--foreground);
+  color: var(--card);
+}
+[data-skin="editorial"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: var(--border);
+}
+[data-skin="editorial"] [data-slot="badge"][data-variant="outline"] {
+  background: transparent;
+  color: var(--foreground);
+  border-color: var(--foreground);
+}
+[data-skin="editorial"] [data-slot="badge"][data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--accent-foreground);
+  border-color: var(--destructive);
+}
+
+[data-skin="editorial"] [data-slot="progress"] {
+  border-radius: 0;
+  background: var(--muted);
+  border: var(--ed-rule) solid var(--foreground);
+}
+[data-skin="editorial"] [data-slot="progress-indicator"] {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--foreground) 0,
+      var(--foreground) calc(var(--ed-rule-heavy) * 3),
+      color-mix(in srgb, var(--foreground) 82%, var(--accent)) calc(var(--ed-rule-heavy) * 3),
+      color-mix(in srgb, var(--foreground) 82%, var(--accent)) calc(var(--ed-rule-heavy) * 6)
+    );
+}
+
+[data-skin="editorial"] [data-slot="slider-range"] { background: var(--foreground); }
+[data-skin="editorial"] [data-slot="slider-thumb"] {
+  border: var(--ed-rule) solid var(--foreground);
+  background: var(--card);
+  border-radius: var(--ed-radius);
+  box-shadow: var(--ed-shadow);
+}

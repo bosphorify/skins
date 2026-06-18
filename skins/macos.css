@@ -1,0 +1,415 @@
+/* ==========================================================================
+   SKIN: macOS (Big Sur / Sonoma)   ·   [data-skin="macos"]
+   Translucent vibrancy, SF-style type, soft rounded corners, layered depth,
+   system-blue accent, unified toolbar + traffic-light window chrome.
+   Pure CSS over stock shadcn. Tunable via the shape-knob vars below.
+   ========================================================================== */
+
+:root[data-skin="macos"] {
+  --app-font-sans: -apple-system, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Inter", system-ui, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "SF Mono", "Menlo", monospace;
+  --app-font-size: 14px;
+
+  /* --- Tunable shape knobs (consumed below; drive geometry/depth/vibrancy) --- */
+  --mac-radius: 7px;          /* base control corner radius */
+  --mac-surface-bump: 6px;    /* extra radius added to cards/windows */
+  --mac-elevation: 7;         /* unit-less depth → composes drop shadow */
+  --mac-vibrancy-blur: 22px;  /* backdrop-filter blur for translucent surfaces */
+  --mac-hairline: 0.06;       /* alpha of the macOS hairline border */
+  --mac-gloss: 0.12;          /* alpha of the inner top sheen on filled controls (Big Sur/Sonoma flat) */
+
+  /* Derived geometry / depth (composed from knobs via calc) */
+  --radius: var(--mac-radius);
+  --mac-radius-surface: calc(var(--mac-radius) + var(--mac-surface-bump));
+  --mac-drop:
+    0 calc(var(--mac-elevation) * 1px) calc(var(--mac-elevation) * 3px) rgba(0,0,0,.10),
+    0 calc(var(--mac-elevation) * 0.2px) calc(var(--mac-elevation) * 0.6px) rgba(0,0,0,.08);
+  --mac-border: rgba(0,0,0,var(--mac-hairline));
+  --mac-sheen: rgba(255,255,255,var(--mac-gloss));
+  --mac-sheen-strong: rgba(255,255,255, calc(var(--mac-gloss) * 2.7));
+  --mac-accent-fill: linear-gradient(color-mix(in srgb, var(--primary) 90%, #fff), var(--primary));
+  --mac-vibrancy-tint: color-mix(in srgb, var(--popover) 82%, transparent);
+
+  /* --- Tokens (route brand/literal values; the editor retunes everything) --- */
+  --background: #ececee;
+  --foreground: #1d1d1f;
+  --card: #ffffff;
+  --card-foreground: #1d1d1f;
+  --popover: #f6f6f8;
+  --popover-foreground: #1d1d1f;
+  --primary: #0071e3;            /* apple.com blue — 4.7:1 with white (AA) */
+  --primary-foreground: #ffffff;
+  --secondary: #ffffff;
+  --secondary-foreground: #1d1d1f;
+  --muted: #f0f0f3;
+  --muted-foreground: #6e6e76;
+  --accent: #007aff;
+  --accent-foreground: #ffffff;
+  --destructive: #d70015;       /* Apple increased-contrast systemRed — 5.4:1 with white */
+  --destructive-foreground: #ffffff;
+  --border: #d6d6db;
+  --input: #c9c9cf;
+  --ring: #007aff;
+  --chart-1: #007aff;
+  --chart-2: #5ac8fa;
+  --chart-3: #34c759;
+  --chart-4: #ff9f0a;
+  --chart-5: #ff375f;
+  --sidebar: #f2f2f4;
+  --sidebar-foreground: #1d1d1f;
+  --sidebar-accent: #007aff;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #d6d6db;
+}
+
+/* --- Typography: SF tracking + control weight --------------------------- */
+[data-skin="macos"] body {
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--background) 90%, var(--primary)),
+    var(--background) 60%,
+    color-mix(in srgb, var(--background) 92%, var(--chart-5))
+  );
+  letter-spacing: -0.01em;
+}
+[data-skin="macos"] ::selection {
+  background: color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+/* --- App bar: unified macOS toolbar + traffic-light window chrome ------- */
+[data-skin="macos"] .app-bar {
+  position: relative;
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  border: 1px solid var(--mac-border);
+  border-top-color: rgba(255,255,255,.7);
+  border-radius: var(--mac-radius-surface);
+  -webkit-backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+  backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), var(--mac-drop);
+  padding-left: 64px;   /* room for traffic-light dots */
+}
+[data-skin="macos"] .app-bar::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: 999px;
+  background: #ff5f57;
+  box-shadow:
+    0 0 0 0.5px rgba(0,0,0,.12),
+    18px 0 0 #febc2e, 18px 0 0 0.5px rgba(0,0,0,.06),
+    36px 0 0 #28c840, 36px 0 0 0.5px rgba(0,0,0,.06);
+}
+
+[data-skin="macos"] .app-nav-inner,
+[data-skin="macos"] .hero,
+[data-skin="macos"] .specimen,
+[data-skin="macos"] .app-status {
+  background: var(--card);
+  border: 1px solid var(--mac-border);
+  border-radius: var(--mac-radius-surface);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), var(--mac-drop);
+}
+[data-skin="macos"] .specimen-head { border-bottom: 1px solid var(--mac-border); }
+[data-skin="macos"] .hero {
+  background: linear-gradient(
+    135deg,
+    var(--foreground),
+    color-mix(in srgb, var(--foreground) 87%, var(--card))
+  );
+  color: var(--card);
+}
+[data-skin="macos"] .hero-kicker { color: var(--chart-2); }
+[data-skin="macos"] .hero-title { color: var(--card); }
+[data-skin="macos"] .hero-sub { color: color-mix(in srgb, var(--card) 77%, var(--foreground)); }
+[data-skin="macos"] .app-nav a { border-radius: var(--mac-radius); }
+[data-skin="macos"] .app-nav a:hover {
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  color: inherit;
+}
+[data-skin="macos"] .app-nav a[aria-current="page"],
+[data-skin="macos"] .app-nav a[data-active="true"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* --- Buttons: distinct variants, glossy default, hairline base --------- */
+[data-skin="macos"] .group\/button {
+  border: 1px solid var(--mac-border);
+  border-radius: var(--mac-radius);
+  background: linear-gradient(var(--card), color-mix(in srgb, var(--card) 92%, var(--foreground)));
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 var(--mac-sheen-strong), 0 1px 1.5px rgba(0,0,0,.12);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+[data-skin="macos"] .group\/button:hover {
+  background: linear-gradient(var(--card), color-mix(in srgb, var(--card) 88%, var(--foreground)));
+}
+[data-skin="macos"] .group\/button:active:not(:disabled) {
+  background: color-mix(in srgb, var(--card) 88%, var(--foreground));
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.12);
+}
+[data-skin="macos"] .group\/button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ring) 45%, transparent);
+  outline-offset: 1px;
+}
+
+/* default — glossy Big Sur "pushed plastic" blue */
+[data-skin="macos"] .group\/button[data-variant="default"] {
+  border-color: transparent;
+  background: linear-gradient(
+    color-mix(in srgb, var(--primary) 90%, #fff),
+    var(--primary)
+  );
+  color: var(--primary-foreground);
+  box-shadow:
+    inset 0 1px 0 var(--mac-sheen),
+    0 1px 2px color-mix(in srgb, var(--primary) 55%, transparent);
+}
+[data-skin="macos"] .group\/button[data-variant="default"]:hover {
+  background: linear-gradient(
+    color-mix(in srgb, var(--primary) 70%, #ffffff),
+    color-mix(in srgb, var(--primary) 94%, #000000)
+  );
+}
+
+/* secondary — solid light fill, no gradient (flat, distinct from default) */
+[data-skin="macos"] .group\/button[data-variant="secondary"] {
+  border-color: var(--mac-border);
+  background: var(--muted);
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 var(--mac-sheen-strong);
+}
+[data-skin="macos"] .group\/button[data-variant="secondary"]:hover {
+  background: color-mix(in srgb, var(--muted) 88%, var(--foreground));
+}
+
+/* outline — transparent with hairline ring */
+[data-skin="macos"] .group\/button[data-variant="outline"] {
+  background: transparent;
+  border: 1px solid var(--input);
+  color: var(--foreground);
+  box-shadow: none;
+}
+[data-skin="macos"] .group\/button[data-variant="outline"]:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  border-color: var(--primary);
+}
+
+/* destructive — glossy red */
+[data-skin="macos"] .group\/button[data-variant="destructive"] {
+  border-color: transparent;
+  background: linear-gradient(
+    color-mix(in srgb, var(--destructive) 90%, #fff),
+    var(--destructive)
+  );
+  color: var(--destructive-foreground);
+  box-shadow:
+    inset 0 1px 0 var(--mac-sheen),
+    0 1px 2px color-mix(in srgb, var(--destructive) 50%, transparent);
+}
+[data-skin="macos"] .group\/button[data-variant="destructive"]:hover {
+  background: linear-gradient(
+    color-mix(in srgb, var(--destructive) 70%, #ffffff),
+    color-mix(in srgb, var(--destructive) 94%, #000000)
+  );
+}
+
+/* ghost / link — chromeless */
+[data-skin="macos"] .group\/button[data-variant="ghost"],
+[data-skin="macos"] .group\/button[data-variant="link"] {
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+[data-skin="macos"] .group\/button[data-variant="ghost"]:hover {
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+}
+[data-skin="macos"] .group\/button[data-variant="link"] { color: var(--primary); }
+
+/* disabled — muted flat fill, no gloss, reads non-interactive */
+[data-skin="macos"] .group\/button:disabled,
+[data-skin="macos"] .group\/button[data-variant]:disabled {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--mac-border);
+  box-shadow: none;
+}
+
+/* --- Inputs: inset recessed field with hairline ----------------------- */
+[data-skin="macos"] [data-slot="input"],
+[data-skin="macos"] [data-slot="textarea"],
+[data-skin="macos"] [data-slot="select-trigger"],
+[data-skin="macos"] .skin-select {
+  border: 1px solid var(--input);
+  border-radius: var(--mac-radius);
+  background: var(--card);
+  box-shadow: 0 1px 1px rgba(0,0,0,.04) inset;
+}
+[data-skin="macos"] [data-slot="input"]:focus-visible,
+[data-skin="macos"] [data-slot="textarea"]:focus-visible,
+[data-skin="macos"] [data-slot="select-trigger"]:focus-visible {
+  outline: 0;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--ring) 35%, transparent);
+}
+
+/* Disabled fields: grayed like macOS read-only text fields */
+[data-skin="macos"] [data-slot="input"]:disabled,
+[data-skin="macos"] [data-slot="textarea"]:disabled {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  box-shadow: none;
+}
+
+/* NSPopUpButton: rounded accent capsule on the chevron element itself */
+[data-skin="macos"] [data-slot="select-trigger"] {
+  background: var(--card);
+  padding-right: 28px;
+}
+[data-skin="macos"] [data-slot="select-trigger"] svg {
+  color: var(--primary-foreground);
+  opacity: 1;
+  background: var(--mac-accent-fill);
+  border-radius: calc(var(--mac-radius) - 2px);
+  padding: 2px;
+  box-shadow: inset 0 1px 0 var(--mac-sheen);
+}
+
+/* --- Cards: hairline + inner top highlight ---------------------------- */
+[data-skin="macos"] [data-slot="card"] {
+  border: 1px solid var(--mac-border);
+  border-radius: var(--mac-radius-surface);
+  background: var(--card);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), var(--mac-drop);
+}
+
+/* --- Vibrancy surfaces: translucent menus/popovers/dialogs ------------ */
+[data-skin="macos"] [data-slot="popover-content"],
+[data-skin="macos"] [data-slot="dropdown-menu-content"],
+[data-skin="macos"] [data-slot="context-menu-content"],
+[data-skin="macos"] [data-slot="select-content"],
+[data-skin="macos"] [data-slot="command"],
+[data-skin="macos"] [data-slot="hover-card-content"] {
+  border: 1px solid var(--mac-border);
+  border-top-color: rgba(255,255,255,.6);
+  border-radius: calc(var(--mac-radius) + 4px);
+  background: var(--mac-vibrancy-tint);
+  -webkit-backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+  backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 14px 40px rgba(0,0,0,.22);
+}
+[data-skin="macos"] [data-slot="tooltip-content"] {
+  border-radius: var(--mac-radius);
+  background: var(--mac-vibrancy-tint);
+  color: var(--popover-foreground);
+  border: 1px solid var(--mac-border);
+  -webkit-backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+  backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+}
+[data-skin="macos"] [data-slot="dialog-content"],
+[data-skin="macos"] [data-slot="alert-dialog-content"],
+[data-skin="macos"] [data-slot="sheet-content"] {
+  border: 1px solid var(--mac-border);
+  border-radius: calc(var(--mac-radius-surface) + 3px);
+  background: color-mix(in srgb, var(--popover) 90%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+  backdrop-filter: saturate(180%) blur(var(--mac-vibrancy-blur));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 24px 60px rgba(0,0,0,.3);
+}
+
+/* Selected list rows: inset accent pill */
+[data-skin="macos"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="macos"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="macos"] [data-slot="select-item"][data-highlighted],
+[data-skin="macos"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: calc(var(--mac-radius) - 1px);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-skin="macos"] [data-slot="checkbox"] {
+  border: 1px solid var(--input);
+  border-radius: calc(var(--mac-radius) - 2px);
+}
+[data-skin="macos"] [data-slot="checkbox"][data-state="checked"] {
+  background: var(--mac-accent-fill);
+  border-color: var(--primary);
+  box-shadow: inset 0 1px 0 var(--mac-sheen);
+}
+
+/* --- Segmented control: recessed track -------------------------------- */
+[data-skin="macos"] [data-slot="tabs-list"] {
+  border-radius: calc(var(--mac-radius) + 2px);
+  background: color-mix(in srgb, var(--muted-foreground) 16%, transparent);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+  padding: 3px;
+  gap: 3px;
+}
+[data-skin="macos"] [data-slot="tabs-trigger"] { border-radius: var(--mac-radius); }
+[data-skin="macos"] [data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--card);
+  box-shadow: inset 0 1px 0 var(--mac-sheen-strong), 0 1px 2px rgba(0,0,0,.18);
+  font-weight: 600;
+}
+
+/* --- Badges: pill silhouettes, distinct legible variants ---------------- */
+[data-skin="macos"] [data-slot="badge"] { border-radius: 999px; }
+[data-skin="macos"] [data-slot="badge"][data-variant="default"] {
+  background: var(--mac-accent-fill);
+  color: var(--primary-foreground);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 var(--mac-sheen);
+}
+[data-skin="macos"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--muted);
+  color: var(--foreground);
+  border: 1px solid var(--mac-border);
+}
+[data-skin="macos"] [data-slot="badge"][data-variant="outline"] {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--input);
+}
+[data-skin="macos"] [data-slot="badge"][data-variant="destructive"] {
+  background: linear-gradient(color-mix(in srgb, var(--destructive) 90%, #fff), var(--destructive));
+  color: var(--destructive-foreground);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 var(--mac-sheen);
+}
+
+/* --- Switch: iOS/macOS toggle — gray off track, accent on, white thumb -- */
+[data-skin="macos"] [data-slot="switch"] {
+  border-radius: 999px;
+  border-color: transparent;
+  background: color-mix(in srgb, var(--foreground) 16%, transparent);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.06);
+}
+[data-skin="macos"] [data-slot="switch"][data-state="checked"] {
+  background: var(--mac-accent-fill);
+  box-shadow: inset 0 1px 0 var(--mac-sheen);
+}
+[data-skin="macos"] [data-slot="switch-thumb"] {
+  background: var(--card);
+  box-shadow: 0 1px 3px rgba(0,0,0,.25), 0 0 0 0.5px rgba(0,0,0,.06);
+}
+[data-skin="macos"] [data-slot="progress"] {
+  border-radius: 999px;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.1);
+}
+[data-skin="macos"] [data-slot="progress-indicator"] {
+  background: var(--mac-accent-fill);
+}
+[data-skin="macos"] [data-slot="slider-range"] {
+  background: var(--mac-accent-fill);
+}
+[data-skin="macos"] [data-slot="slider-thumb"] {
+  background: var(--card);
+  border: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3), inset 0 0 0 0.5px rgba(0,0,0,.06);
+}

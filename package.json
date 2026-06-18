@@ -1,0 +1,21 @@
+{
+  "name": "bosphorify-skins",
+  "version": "0.1.0",
+  "private": false,
+  "description": "15 swappable shadcn/ui concept skins (Windows XP, Brutalist, Glass, Terminal, Synthwave, …) as a shadcn registry — CSS overlays over unmodified shadcn components.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build:registry": "pnpm dlx shadcn@latest build --output r"
+  },
+  "keywords": [
+    "shadcn",
+    "shadcn-ui",
+    "registry",
+    "theme",
+    "skin",
+    "css",
+    "tailwind",
+    "design-system"
+  ]
+}

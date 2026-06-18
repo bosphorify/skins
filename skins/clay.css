@@ -1,0 +1,435 @@
+/* ==========================================================================
+   SKIN: Claymorphism   ·   [data-skin="clay"]
+   Soft inflated 3D, pastel palette, big rounded corners, puffy double-inset +
+   outer shadow. Squishy press interactions. Rounded friendly type.
+   Pure CSS over stock shadcn — every surface driven by shape-knob vars.
+   ========================================================================== */
+
+:root[data-skin="clay"] {
+  --app-font-sans: "Poppins", "Quicksand", "Nunito", system-ui, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --app-font-size: 14px;
+
+  /* ---- Color tokens (single source of truth for every rule) ---- */
+  --background: #efeafe;
+  --foreground: #423a63;          /* darkened for WCAG body contrast */
+  --card: #f6f2ff;
+  --card-foreground: #423a63;
+  --popover: #f6f2ff;
+  --popover-foreground: #423a63;
+  --primary: #6f5de3;             /* deepened so #fff bold labels clear AA (≥4.5:1) */
+  --primary-foreground: #ffffff;
+  --secondary: #ffe1ef;
+  --secondary-foreground: #7a3f5c;
+  --muted: #e7e1fb;
+  --muted-foreground: #655b8b;    /* darkened from #6a6090 so inactive tab labels clear AA on --muted */
+  --accent: #7be0d4;
+  --accent-foreground: #1e544d;
+  --destructive: #dd2e47;         /* deepened so #fff text clears AA (≥4.5:1) */
+  --destructive-foreground: #ffffff;
+  --border: #ddd4f7;
+  --input: #ddd4f7;
+  --ring: #8b7bf7;
+  --clay-ink: #5a4d8a;            /* shared ink color — retunes with the palette */
+  --clay-face: #fff;              /* raised/sunken face color — retunes with the palette */
+  --chart-1: #8b7bf7;
+  --chart-2: #7be0d4;
+  --chart-3: #ffd47b;
+  --chart-4: #ff9ec4;
+  --chart-5: #87c5ff;
+  --sidebar: #f6f2ff;
+  --sidebar-foreground: #423a63;
+  --sidebar-accent: #6f5de3;      /* matches --primary so white accent-foreground clears AA */
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #ddd4f7;
+
+  /* =====================================================================
+     TUNABLE SHAPE KNOBS  — these genuinely retune the whole skin
+     ===================================================================== */
+  --clay-puff: 9;                 /* unitless: inflation / extrusion amount   */
+  --radius: 24px;                 /* single corner source of truth            */
+  --clay-radius: var(--radius);   /* component radii derive from this         */
+  --clay-shadow-color: 92, 70, 180; /* RGB triplet (comma-separated for legacy rgba()) for the cast/depth shadow */
+  --clay-shadow-alpha: 0.30;      /* opacity of the outer puff shadow         */
+  --clay-highlight: 0.92;         /* strength of the inner top-light sheen    */
+  --clay-squish: 3px;             /* how far surfaces sink on :active press   */
+
+  /* ---- Semantic shadow recipes composed from the knobs above ---- */
+  /* Outer puff + inner top sheen + inner bottom core-shade = clay extrusion */
+  --clay-lift:
+    0 calc(var(--clay-puff) * 2px) calc(var(--clay-puff) * 4px)
+      rgba(var(--clay-shadow-color), var(--clay-shadow-alpha)),
+    inset 0 calc(var(--clay-puff) * 2px) calc(var(--clay-puff) * 3px)
+      rgba(255, 255, 255, var(--clay-highlight)),
+    inset 0 calc(var(--clay-puff) * -1.4px) calc(var(--clay-puff) * 2px)
+      rgba(var(--clay-shadow-color), 0.26);
+
+  /* Lift for LARGE surfaces — softer inner sheen so card tops don't wash out */
+  --clay-lift-lg:
+    0 calc(var(--clay-puff) * 2px) calc(var(--clay-puff) * 4px)
+      rgba(var(--clay-shadow-color), var(--clay-shadow-alpha)),
+    inset 0 calc(var(--clay-puff) * 2px) calc(var(--clay-puff) * 3px)
+      rgba(255, 255, 255, calc(var(--clay-highlight) * 0.55)),
+    inset 0 calc(var(--clay-puff) * -1.4px) calc(var(--clay-puff) * 2px)
+      rgba(var(--clay-shadow-color), 0.26);
+
+  /* Pressed-in / sunken recipe (inputs, tracks, active controls) */
+  --clay-inset:
+    inset 0 calc(var(--clay-puff) * 0.5px) calc(var(--clay-puff) * 1.1px)
+      rgba(var(--clay-shadow-color), 0.28),
+    inset 0 calc(var(--clay-puff) * -0.4px) calc(var(--clay-puff) * 0.6px)
+      rgba(255, 255, 255, 0.7);
+
+  /* Softer puff for small inflated chips (badges, thumbs) */
+  --clay-lift-sm:
+    0 calc(var(--clay-puff) * 0.8px) calc(var(--clay-puff) * 1.6px)
+      rgba(var(--clay-shadow-color), var(--clay-shadow-alpha)),
+    inset 0 calc(var(--clay-puff) * 0.8px) calc(var(--clay-puff) * 1.2px)
+      rgba(255, 255, 255, var(--clay-highlight));
+
+  /* Deep press for the :active squish */
+  --clay-press:
+    inset 0 var(--clay-squish) calc(var(--clay-puff) * 1.4px)
+      rgba(var(--clay-shadow-color), 0.4),
+    inset 0 calc(var(--clay-squish) * -0.6) calc(var(--clay-puff) * 0.8px)
+      rgba(255, 255, 255, 0.5);
+
+  /* Focus halo — derived from the ring token so it retunes with the palette */
+  --clay-ring: 0 0 0 4px color-mix(in srgb, var(--ring) 45%, transparent);
+}
+
+[data-skin="clay"] body {
+  background: radial-gradient(120% 120% at 0% 0%,
+    color-mix(in srgb, var(--background), white 30%),
+    var(--background) 55%,
+    color-mix(in srgb, var(--secondary), white 40%));
+  color: var(--foreground);
+}
+[data-skin="clay"] ::selection { background: color-mix(in srgb, var(--primary) 30%, white); color: var(--foreground); }
+
+/* ---- Shell surfaces: all puffed clay panels ---- */
+[data-skin="clay"] .app-bar,
+[data-skin="clay"] .app-nav-inner,
+[data-skin="clay"] .specimen,
+[data-skin="clay"] .app-status {
+  background: var(--card);
+  border: 0;
+  border-radius: calc(var(--clay-radius) + 4px);
+  box-shadow: var(--clay-lift);
+  backdrop-filter: none;
+}
+[data-skin="clay"] .specimen { box-shadow: var(--clay-lift-lg); }
+[data-skin="clay"] .specimen-head { border-bottom: 0; }
+[data-skin="clay"] .specimen-title { color: var(--foreground); font-weight: 700; }
+[data-skin="clay"] .app-status { color: var(--muted-foreground); }
+
+/* ---- Hero: treated clay banner, raised, with legible sub text ---- */
+[data-skin="clay"] .hero {
+  background:
+    radial-gradient(140% 120% at 15% 10%,
+      color-mix(in srgb, var(--primary), white 20%) 0%,
+      var(--primary) 45%,
+      color-mix(in srgb, var(--primary), black 15%) 100%);
+  border: 0;
+  border-radius: calc(var(--clay-radius) + 4px);
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  box-shadow:
+    var(--clay-lift),
+    inset 0 calc(var(--clay-puff) * 2px) calc(var(--clay-puff) * 3px) rgba(255, 255, 255, 0.45);
+}
+[data-skin="clay"] .hero-kicker { color: var(--primary-foreground); opacity: 0.95; text-shadow: 0 1px 2px rgba(var(--clay-shadow-color), 0.4); }
+[data-skin="clay"] .hero-title { color: var(--primary-foreground); text-shadow: 0 2px 6px rgba(var(--clay-shadow-color), 0.35); }
+[data-skin="clay"] .hero-sub { color: var(--primary-foreground); opacity: 0.95; text-shadow: 0 1px 3px rgba(var(--clay-shadow-color), 0.4); }
+
+[data-skin="clay"] .app-nav a {
+  border-radius: calc(var(--clay-radius) * 0.6);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+[data-skin="clay"] .app-nav a:hover { background: var(--muted); color: var(--foreground); }
+
+/* =========================================================================
+   BUTTONS — distinct, puffy, squishy variants
+   ========================================================================= */
+[data-skin="clay"] .group\/button {
+  border: 0;
+  border-radius: var(--clay-radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 700;
+  box-shadow: var(--clay-lift);
+  transition: box-shadow 0.15s ease, transform 0.1s ease, filter 0.15s ease;
+}
+[data-skin="clay"] .group\/button:hover:not(:disabled) {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+[data-skin="clay"] .group\/button:active:not(:disabled) {
+  box-shadow: var(--clay-press);
+  transform: translateY(1px);
+}
+[data-skin="clay"] .group\/button:focus-visible {
+  outline: 0;
+  box-shadow: var(--clay-lift), var(--clay-ring);
+}
+/* Disabled: deflated, muted, clearly non-interactive */
+[data-skin="clay"] .group\/button:disabled {
+  box-shadow: none;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  transform: none;
+  filter: none;
+}
+
+/* Secondary: candy-pink inflated chip */
+[data-skin="clay"] .group\/button[data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+/* Outline: light face with a pressed-in dish look (clearly recessed) */
+[data-skin="clay"] .group\/button[data-variant="outline"] {
+  background: var(--clay-face);
+  color: var(--clay-ink);
+  box-shadow: var(--clay-inset);
+}
+[data-skin="clay"] .group\/button[data-variant="outline"]:active:not(:disabled) {
+  box-shadow: var(--clay-press);
+}
+/* Ghost: flat until hovered, then gently inflates */
+[data-skin="clay"] .group\/button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--clay-ink);
+  box-shadow: none;
+}
+[data-skin="clay"] .group\/button[data-variant="ghost"]:hover:not(:disabled) {
+  background: var(--muted);
+  box-shadow: var(--clay-lift-sm);
+  filter: none;
+}
+/* Destructive: deep coral puff, white label */
+[data-skin="clay"] .group\/button[data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+/* Link: text-only */
+[data-skin="clay"] .group\/button[data-variant="link"] {
+  background: none;
+  box-shadow: none;
+  color: #6353d6; /* darker than --primary: 5.10:1 on card, 4.78:1 on bg (AA for 14px text) */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-skin="clay"] .group\/button[data-variant="link"]:hover:not(:disabled) {
+  transform: none;
+}
+/* Link press: no squish — the generic :active rule outranks the variant base */
+[data-skin="clay"] .group\/button[data-variant="link"]:active:not(:disabled) {
+  box-shadow: none;
+  transform: none;
+}
+/* Focus rings re-asserted AFTER variant blocks so source order can't clobber them */
+[data-skin="clay"] .group\/button[data-variant="outline"]:focus-visible {
+  box-shadow: var(--clay-inset), var(--clay-ring);
+}
+[data-skin="clay"] .group\/button[data-variant="ghost"]:focus-visible,
+[data-skin="clay"] .group\/button[data-variant="link"]:focus-visible {
+  box-shadow: var(--clay-ring);
+}
+
+/* =========================================================================
+   INPUTS & FIELDS — sunken clay dishes
+   ========================================================================= */
+[data-skin="clay"] [data-slot="input"],
+[data-skin="clay"] [data-slot="textarea"],
+[data-skin="clay"] [data-slot="select-trigger"],
+[data-skin="clay"] .skin-select {
+  border: 0;
+  border-radius: calc(var(--clay-radius) * 0.7);
+  background: var(--clay-face);
+  color: var(--foreground);
+  box-shadow: var(--clay-inset);
+  transition: box-shadow 0.15s ease;
+}
+[data-skin="clay"] [data-slot="input"]:focus-visible,
+[data-skin="clay"] [data-slot="textarea"]:focus-visible,
+[data-skin="clay"] [data-slot="select-trigger"]:focus-visible {
+  outline: 0;
+  box-shadow: var(--clay-inset), var(--clay-ring);
+}
+
+/* =========================================================================
+   PANELS, MENUS, OVERLAYS
+   ========================================================================= */
+[data-skin="clay"] [data-slot="card"] {
+  border: 0;
+  border-radius: calc(var(--clay-radius) + 4px);
+  background: var(--card);
+  box-shadow: var(--clay-lift-lg);
+}
+[data-skin="clay"] [data-slot="popover-content"],
+[data-skin="clay"] [data-slot="dropdown-menu-content"],
+[data-skin="clay"] [data-slot="context-menu-content"],
+[data-skin="clay"] [data-slot="select-content"],
+[data-skin="clay"] [data-slot="command"],
+[data-skin="clay"] [data-slot="hover-card-content"],
+[data-skin="clay"] [data-slot="dialog-content"],
+[data-skin="clay"] [data-slot="alert-dialog-content"],
+[data-skin="clay"] [data-slot="sheet-content"] {
+  border: 0;
+  border-radius: var(--clay-radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--clay-lift);
+}
+[data-skin="clay"] [data-slot="tooltip-content"] {
+  border-radius: calc(var(--clay-radius) * 0.5);
+  background: var(--clay-ink);
+  color: var(--clay-face);
+  box-shadow: var(--clay-lift-sm);
+}
+[data-skin="clay"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="clay"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="clay"] [data-slot="select-item"][data-highlighted],
+[data-skin="clay"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: calc(var(--clay-radius) * 0.5);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* =========================================================================
+   CHECKBOX / RADIO — pressed dishes that puff out when active
+   ========================================================================= */
+[data-skin="clay"] [data-slot="checkbox"] {
+  border: 0;
+  border-radius: calc(var(--clay-radius) * 0.33);
+  background: var(--clay-face);
+  color: var(--primary);
+  box-shadow: var(--clay-inset);
+  transition: box-shadow 0.15s ease, background 0.15s ease;
+}
+[data-skin="clay"] [data-slot="checkbox"][data-state="checked"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--clay-lift-sm);
+}
+[data-skin="clay"] [data-slot="radio-group-item"] {
+  border: 0;
+  background: var(--clay-face);
+  color: var(--primary);
+  box-shadow: var(--clay-inset);
+  transition: box-shadow 0.15s ease, background 0.15s ease;
+}
+[data-skin="clay"] [data-slot="radio-group-item"][data-state="checked"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--clay-lift-sm);
+}
+[data-skin="clay"] [data-slot="radio-group-item"][data-state="checked"] svg {
+  fill: var(--primary-foreground);
+}
+
+/* =========================================================================
+   TABS
+   ========================================================================= */
+[data-skin="clay"] [data-slot="tabs-list"] {
+  border-radius: calc(var(--clay-radius) * 0.75);
+  background: var(--muted);
+  padding: 5px;
+  gap: 4px;
+  box-shadow: var(--clay-inset);
+}
+[data-skin="clay"] [data-slot="tabs-trigger"] {
+  border-radius: calc(var(--clay-radius) * 0.55);
+  color: var(--muted-foreground);
+  transition: box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+[data-skin="clay"] [data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--clay-face);
+  box-shadow: var(--clay-lift-sm);
+  color: var(--clay-ink);
+  font-weight: 700;
+}
+
+/* =========================================================================
+   BADGES — puffy little clay pills, distinct per variant
+   ========================================================================= */
+[data-skin="clay"] [data-slot="badge"] {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.2em 0.7em;
+  font-weight: 700;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--clay-lift-sm);
+}
+[data-skin="clay"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+[data-skin="clay"] [data-slot="badge"][data-variant="outline"] {
+  background: var(--clay-face);
+  color: var(--clay-ink);
+  box-shadow: var(--clay-inset);
+}
+[data-skin="clay"] [data-slot="badge"][data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+/* =========================================================================
+   SWITCH — sunken track, puffed thumb, clear on/off
+   ========================================================================= */
+[data-skin="clay"] [data-slot="switch"] {
+  border-radius: 999px;
+  background: var(--muted);
+  box-shadow: var(--clay-inset);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+[data-skin="clay"] [data-slot="switch"][data-state="checked"] {
+  background: var(--primary);
+  box-shadow:
+    inset 0 calc(var(--clay-puff) * 0.5px) calc(var(--clay-puff) * 1.1px)
+      color-mix(in srgb, var(--primary) 60%, black),
+    inset 0 calc(var(--clay-puff) * -0.4px) calc(var(--clay-puff) * 0.6px)
+      rgba(255, 255, 255, 0.35);
+}
+[data-skin="clay"] [data-slot="switch-thumb"] {
+  background: var(--clay-face);
+  box-shadow: var(--clay-lift-sm);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+[data-skin="clay"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: color-mix(in srgb, var(--primary) 8%, white);
+}
+
+/* =========================================================================
+   PROGRESS & SLIDER — sunken tracks, puffed fills/thumbs
+   ========================================================================= */
+[data-skin="clay"] [data-slot="progress"] {
+  border-radius: 999px;
+  background: var(--muted);
+  box-shadow: var(--clay-inset);
+}
+[data-skin="clay"] [data-slot="progress-indicator"] {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary), white 20%));
+  box-shadow: inset 0 calc(var(--clay-puff) * 0.6px) calc(var(--clay-puff) * 0.9px) rgba(255, 255, 255, 0.55);
+}
+[data-skin="clay"] [data-slot="slider-track"] {
+  border-radius: 999px;
+  background: var(--muted);
+  box-shadow: var(--clay-inset);
+}
+[data-skin="clay"] [data-slot="slider-range"] {
+  background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary), white 20%));
+}
+[data-skin="clay"] [data-slot="slider-thumb"] {
+  border: 0;
+  background: var(--clay-face);
+  box-shadow: var(--clay-lift-sm);
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+[data-skin="clay"] [data-slot="slider-thumb"]:active {
+  box-shadow: var(--clay-press);
+  transform: scale(0.94);
+}

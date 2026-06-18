@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "theme-xp",
+  "title": "Windows XP theme (tokens only)",
+  "description": "The XP token half ONLY — colors, radius 0, Tahoma — expressed as native shadcn cssVars. This is exactly what a tweakcn theme outputs: a flat, square recolor. Pair with skin-xp for the bevels/chrome that tokens can't express.",
+  "cssVars": {
+    "theme": {
+      "font-sans": "Tahoma, Verdana, Geneva, 'DejaVu Sans', 'Segoe UI', sans-serif",
+      "radius": "0px"
+    },
+    "light": {
+      "background": "#d4d0c8",
+      "foreground": "#000000",
+      "card": "#ece9d8",
+      "card-foreground": "#000000",
+      "popover": "#ffffff",
+      "popover-foreground": "#000000",
+      "primary": "#0a246a",
+      "primary-foreground": "#ffffff",
+      "secondary": "#ece9d8",
+      "secondary-foreground": "#000000",
+      "muted": "#d4d0c8",
+      "muted-foreground": "#555555",
+      "accent": "#316ac5",
+      "accent-foreground": "#ffffff",
+      "destructive": "#a40000",
+      "border": "#808080",
+      "input": "#808080",
+      "ring": "#0a246a",
+      "chart-1": "#0a246a",
+      "chart-2": "#3a6ea5",
+      "chart-3": "#1f8a1f",
+      "chart-4": "#c08000",
+      "chart-5": "#a40000",
+      "sidebar": "#ece9d8",
+      "sidebar-foreground": "#000000",
+      "sidebar-accent": "#316ac5",
+      "sidebar-accent-foreground": "#ffffff",
+      "sidebar-border": "#808080"
+    }
+  },
+  "type": "registry:theme"
+}

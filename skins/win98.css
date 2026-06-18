@@ -1,0 +1,455 @@
+/* ==========================================================================
+   SKIN: Windows 98   ·   [data-skin="win98"]
+   Classic battleship grey, hard 4-edge 3D bevels (sharper/greyer than XP's
+   Luna), solid navy→azure title gradient, MS-Sans-ish type. Pure CSS over
+   stock shadcn. Every bevel is composed from tunable knob vars below.
+   ========================================================================== */
+
+:root[data-skin="win98"] {
+  --app-font-sans: "MS Sans Serif", "Pixelated MS Sans Serif", "Tahoma", Geneva, sans-serif;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: "Fixedsys", "Courier New", monospace;
+  --app-font-size: 13px;
+
+  --radius: 0px;
+
+  --background: #c0c0c0;
+  --foreground: #000000;
+  --card: #c0c0c0;
+  --card-foreground: #000000;
+  --popover: #c0c0c0;
+  --popover-foreground: #000000;
+  --primary: #000080;
+  --primary-foreground: #ffffff;
+  --secondary: #c0c0c0;
+  --secondary-foreground: #000000;
+  --muted: #c0c0c0;
+  --muted-foreground: #404040;
+  --accent: #000080;
+  --accent-foreground: #ffffff;
+  --destructive: #a80000;
+  --border: #808080;
+  --input: #ffffff;
+  --ring: #000080;
+  --chart-1: #000080;
+  --chart-2: #008080;
+  --chart-3: #008000;
+  --chart-4: #808000;
+  --chart-5: #800000;
+  --sidebar: #c0c0c0;
+  --sidebar-foreground: #000000;
+  --sidebar-accent: #000080;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #808080;
+
+  /* ---- Tunable shape knobs --------------------------------------------- */
+  /* Bevel thickness: scales the whole 4-edge 3D border system via calc().   */
+  --w98-bevel: 2px;
+  /* Bevel palette — the four canonical Win98 edge tones, retunable.         */
+  --w98-shadow-light: #ffffff;        /* outer top/left highlight  */
+  --w98-shadow-face: var(--card);     /* the grey control face     */
+  --w98-shadow-mid: var(--border);    /* soft inner shade (#808080)*/
+  --w98-shadow-dark: #000000;         /* deepest outer bottom/right*/
+  /* Teal desktop wallpaper tint + title-bar gradient endpoints.            */
+  --w98-desktop: #008080;
+  --w98-title-a: var(--primary);      /* active title start (navy) */
+  --w98-title-b: #1084d0;             /* active title end  (azure) */
+  /* Drop-shadow distance behind floating windows (dialogs/menus).          */
+  --w98-window-drop: 2px;
+  /* Info-tooltip yellow, hyperlink blue, and titlebar tag tint — the last
+     stray chrome literals, routed here so the whole palette retunes.        */
+  --w98-info-bg: #ffffe1;
+  --w98-link: #0000ee;
+  --w98-tag: color-mix(in srgb, var(--primary-foreground) 80%, var(--primary));
+
+  /* Raised bevel: highlight on top/left, shade+black on bottom/right.
+     Inner soft layers use --bevel; outer crisp layers stay 1px for the
+     signature hard Win98 edge. All four tones routed through knob vars.    */
+  --w98-raised:
+    inset calc(-1 * var(--w98-bevel)) calc(-1 * var(--w98-bevel)) 0 0 var(--w98-shadow-mid),
+    inset var(--w98-bevel) var(--w98-bevel) 0 0 var(--w98-shadow-light),
+    inset -1px -1px 0 0 var(--w98-shadow-dark),
+    inset 1px 1px 0 0 var(--w98-shadow-light);
+  /* Sunken bevel: inverse of raised (pressed buttons, inset panels).       */
+  --w98-sunken:
+    inset var(--w98-bevel) var(--w98-bevel) 0 0 var(--w98-shadow-mid),
+    inset calc(-1 * var(--w98-bevel)) calc(-1 * var(--w98-bevel)) 0 0 var(--w98-shadow-light),
+    inset 1px 1px 0 0 var(--w98-shadow-dark),
+    inset -1px -1px 0 0 var(--w98-shadow-light);
+  /* Field bevel: deep 2-tone inset for white text inputs (darkest inside). */
+  --w98-field:
+    inset 1px 1px 0 0 var(--w98-shadow-mid),
+    inset -1px -1px 0 0 var(--w98-shadow-light),
+    inset 2px 2px 0 0 var(--w98-shadow-dark);
+  /* Outer 1px black frame for true window chrome (drawn as a shadow ring). */
+  --w98-frame: 0 0 0 1px var(--w98-shadow-dark);
+}
+
+[data-skin="win98"] body { background: var(--w98-desktop); font-size: var(--app-font-size); }
+[data-skin="win98"] ::selection { background: var(--primary); color: var(--primary-foreground); }
+
+/* ---- Shell → window chrome --------------------------------------------- */
+[data-skin="win98"] .app-bar,
+[data-skin="win98"] .app-nav-inner,
+[data-skin="win98"] .app-status {
+  background: var(--w98-shadow-face);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--w98-raised);
+}
+/* Top-level windowed surfaces get the crisp outer black frame + raised face. */
+[data-skin="win98"] .specimen,
+[data-skin="win98"] .hero {
+  background: var(--w98-shadow-face);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--w98-frame), var(--w98-raised);
+}
+[data-skin="win98"] .app-bar { backdrop-filter: none; }
+[data-skin="win98"] .app-brand { font-weight: 700; }
+
+/* Title bars — solid navy→azure gradient sitting inside the window frame.  */
+[data-skin="win98"] .stage-head,
+[data-skin="win98"] .specimen-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: var(--w98-bevel);
+  padding: 2px 3px;
+  color: var(--primary-foreground);
+  font-weight: 700;
+  border: 0;
+  border-bottom: 0;
+  background: linear-gradient(to right, var(--w98-title-a), var(--w98-title-b));
+}
+[data-skin="win98"] .app-nav-title {
+  color: var(--primary-foreground);
+  font-weight: 700;
+  background: linear-gradient(to right, var(--w98-title-a), var(--w98-title-b));
+  padding: 2px 3px;
+}
+/* Faux raised window-control button (the iconic ☓ close box) on title bars. */
+[data-skin="win98"] .stage-head::after,
+[data-skin="win98"] .specimen-head::after {
+  content: "✕";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  font-family: var(--app-font-sans);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--foreground);
+  background: var(--w98-shadow-face);
+  box-shadow: var(--w98-raised);
+}
+/* Shell code/delta toggles → small raised Win98 buttons on the gradient.   */
+[data-skin="win98"] .code-toggle {
+  border-radius: 0;
+  border: 0;
+  background: var(--w98-shadow-face);
+  color: var(--foreground);
+  box-shadow: var(--w98-raised);
+}
+[data-skin="win98"] .specimen-title { font-weight: 700; color: var(--primary-foreground); }
+[data-skin="win98"] .specimen-tag { color: var(--w98-tag); }
+[data-skin="win98"] .app-nav a { border-radius: var(--radius); }
+[data-skin="win98"] .app-nav a:hover { background: var(--accent); color: var(--accent-foreground); }
+
+/* Hero → a Win98 panel, not a black terminal box. */
+[data-skin="win98"] .hero-kicker { color: var(--primary); font-weight: 700; }
+[data-skin="win98"] .hero-title { display: none; }
+[data-skin="win98"] .hero-sub { color: var(--foreground); font-family: var(--app-font-sans); }
+
+/* ---- Controls ----------------------------------------------------------- */
+[data-skin="win98"] .group\/button {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--w98-shadow-face);
+  color: var(--foreground);
+  box-shadow: var(--w98-raised);
+  transition: none;
+}
+[data-skin="win98"] .group\/button:active:not(:disabled),
+[data-skin="win98"] .group\/button[data-state="open"],
+[data-skin="win98"] .group\/button[aria-expanded="true"] {
+  box-shadow: var(--w98-sunken);
+  padding-top: 1px;
+  padding-left: 1px;
+}
+[data-skin="win98"] .group\/button:focus-visible { outline: 1px dotted var(--foreground); outline-offset: -4px; }
+
+/* Variant differentiation — all four read distinctly within the grey system. */
+/* Default = the canonical Win98 "default push button": extra 1px black ring. */
+[data-skin="win98"] .group\/button[data-variant="default"] {
+  font-weight: 700;
+  background: var(--w98-shadow-face);
+  color: var(--foreground);
+  box-shadow: var(--w98-frame), var(--w98-raised);
+}
+[data-skin="win98"] .group\/button[data-variant="secondary"] {
+  background: var(--w98-shadow-face);
+  color: var(--foreground);
+  font-weight: 400;
+}
+/* Outline = flat control with a plain 1px border (no default-button ring).  */
+[data-skin="win98"] .group\/button[data-variant="outline"] {
+  background: var(--w98-shadow-face);
+  color: var(--foreground);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+[data-skin="win98"] .group\/button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}
+[data-skin="win98"] .group\/button[data-variant="ghost"]:hover:not(:disabled) {
+  background: var(--w98-shadow-face);
+  box-shadow: var(--w98-raised);
+}
+[data-skin="win98"] .group\/button[data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--primary-foreground);
+  box-shadow: var(--w98-raised);
+  font-weight: 700;
+}
+[data-skin="win98"] .group\/button[data-variant="link"] {
+  background: none;
+  box-shadow: none;
+  color: var(--w98-link);
+  text-decoration: underline;
+}
+/* Disabled: period-correct — keeps the raised bevel, engraved grey label.   */
+[data-skin="win98"] .group\/button:disabled {
+  background: var(--w98-shadow-face);
+  color: var(--w98-shadow-mid);
+  text-shadow: 1px 1px 0 var(--w98-shadow-light);
+  box-shadow: var(--w98-raised);
+  font-weight: 400;
+  opacity: 1;
+}
+
+[data-skin="win98"] [data-slot="input"],
+[data-skin="win98"] [data-slot="textarea"],
+[data-skin="win98"] [data-slot="select-trigger"],
+[data-skin="win98"] .skin-select {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--input);
+  color: var(--foreground);
+  box-shadow: var(--w98-field);
+}
+/* Field focus: keep the sunken bevel, add a ring derived from --ring.       */
+[data-skin="win98"] [data-slot="input"]:focus-visible,
+[data-skin="win98"] [data-slot="textarea"]:focus-visible,
+[data-skin="win98"] [data-slot="select-trigger"]:focus-visible,
+[data-skin="win98"] .skin-select:focus-visible {
+  outline: none;
+  box-shadow:
+    var(--w98-field),
+    0 0 0 2px color-mix(in srgb, var(--ring) 40%, transparent);
+}
+/* Select trigger: paint a raised grey Win98 combo-arrow button zone on the
+   right edge with layered 1px light/mid/dark gradient edges over the face.  */
+[data-skin="win98"] [data-slot="select-trigger"] {
+  padding-right: 24px;
+  background-color: var(--input);
+  background-image:
+    linear-gradient(var(--w98-shadow-dark), var(--w98-shadow-dark)),
+    linear-gradient(var(--w98-shadow-dark), var(--w98-shadow-dark)),
+    linear-gradient(var(--w98-shadow-light), var(--w98-shadow-light)),
+    linear-gradient(var(--w98-shadow-light), var(--w98-shadow-light)),
+    linear-gradient(var(--w98-shadow-mid), var(--w98-shadow-mid)),
+    linear-gradient(var(--w98-shadow-mid), var(--w98-shadow-mid)),
+    linear-gradient(var(--w98-shadow-face), var(--w98-shadow-face));
+  background-position:
+    right 2px bottom 2px,           /* dark bottom edge  */
+    right 2px top 2px,              /* dark right edge   */
+    right 2px top 2px,              /* light top edge    */
+    right 17px top 2px,             /* light left edge   */
+    right 3px bottom 3px,           /* mid inner bottom  */
+    right 3px top 3px,              /* mid inner right   */
+    right 2px top 2px;              /* grey button face  */
+  background-size:
+    16px 1px,
+    1px calc(100% - 4px),
+    16px 1px,
+    1px calc(100% - 4px),
+    14px 1px,
+    1px calc(100% - 6px),
+    16px calc(100% - 4px);
+  background-repeat: no-repeat;
+}
+[data-skin="win98"] [data-slot="select-trigger"] svg {
+  color: var(--foreground);
+  opacity: 1;
+}
+/* Disabled fields: silver face like period Win98, not a base-theme fade.    */
+[data-skin="win98"] [data-slot="input"]:disabled,
+[data-skin="win98"] [data-slot="textarea"]:disabled {
+  background: var(--w98-shadow-face);
+  color: var(--w98-shadow-mid);
+  opacity: 1;
+}
+[data-skin="win98"] [data-slot="card"] {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--w98-shadow-face);
+  box-shadow: var(--w98-frame), var(--w98-raised);
+}
+
+/* Floating surfaces: black outer frame + raised face = crisp window object. */
+[data-skin="win98"] [data-slot="popover-content"],
+[data-skin="win98"] [data-slot="dropdown-menu-content"],
+[data-skin="win98"] [data-slot="context-menu-content"],
+[data-skin="win98"] [data-slot="select-content"],
+[data-skin="win98"] [data-slot="command"],
+[data-skin="win98"] [data-slot="hover-card-content"] {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--w98-shadow-face);
+  box-shadow: var(--w98-frame), var(--w98-raised);
+}
+[data-skin="win98"] [data-slot="tooltip-content"] {
+  border-radius: var(--radius);
+  background: var(--w98-info-bg);
+  color: var(--foreground);
+  border: 1px solid var(--w98-shadow-dark);
+}
+[data-skin="win98"] [data-slot="tooltip-content"] svg { fill: var(--w98-info-bg); }
+[data-skin="win98"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="win98"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="win98"] [data-slot="select-item"][data-highlighted],
+[data-skin="win98"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Dialogs: window frame, raised face, and a hard SOLID offset drop shadow
+   (Win98 had no soft alpha shadows — the drop is a flat black offset).      */
+[data-skin="win98"] [data-slot="dialog-content"],
+[data-skin="win98"] [data-slot="alert-dialog-content"],
+[data-skin="win98"] [data-slot="sheet-content"] {
+  border-radius: var(--radius);
+  background: var(--w98-shadow-face);
+  box-shadow:
+    var(--w98-frame),
+    var(--w98-raised),
+    var(--w98-window-drop) var(--w98-window-drop) 0 0 var(--w98-shadow-dark);
+  border: 0;
+}
+
+/* Checkbox: square sunken white field, BLACK check glyph (period-correct). */
+[data-skin="win98"] [data-slot="checkbox"] {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--input);
+  box-shadow: var(--w98-field);
+  color: var(--foreground);
+}
+/* Radio: stays CIRCULAR with its own ring-style sunken bevel + black dot.
+   Spread-based rings wrap the curve — --w98-field's offset 2px dark layer
+   would paint a harsh black crescent at top-left on a circle.              */
+[data-skin="win98"] [data-slot="radio-group-item"] {
+  border: 0;
+  border-radius: 999px;
+  background: var(--input);
+  box-shadow:
+    inset 1px 1px 0 1px var(--w98-shadow-mid),
+    inset -1px -1px 0 1px var(--w98-shadow-light),
+    0 0 0 1px transparent;
+  color: var(--foreground);
+}
+
+/* Tabs: active tab drops its bottom edge so it bleeds into the panel body. */
+[data-skin="win98"] [data-slot="tabs-list"] {
+  border-radius: var(--radius);
+  background: transparent;
+  gap: 2px;
+  padding: 0;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border);
+}
+[data-skin="win98"] [data-slot="tabs-trigger"] {
+  border-radius: var(--radius);
+  background: var(--w98-shadow-face);
+  color: var(--foreground);
+  box-shadow: var(--w98-raised);
+  margin-top: 2px;
+  border: 0;
+}
+[data-skin="win98"] [data-slot="tabs-trigger"][data-state="active"] {
+  margin-top: 0;
+  margin-bottom: -1px;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  /* Top + left highlight, right black edge, NO bottom edge → merges down.  */
+  box-shadow:
+    inset 1px 1px 0 0 var(--w98-shadow-light),
+    inset var(--w98-bevel) 0 0 0 var(--w98-shadow-light),
+    inset -1px 0 0 0 var(--w98-shadow-dark),
+    inset calc(-1 * var(--w98-bevel)) 0 0 0 var(--w98-shadow-mid);
+}
+
+[data-skin="win98"] [data-slot="badge"] {
+  border-radius: var(--radius);
+  box-shadow: var(--w98-raised);
+  border: 0;
+}
+/* Badge variants: each pair pulled from tokens so all four read distinctly. */
+[data-skin="win98"] [data-slot="badge"][data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+[data-skin="win98"] [data-slot="badge"][data-variant="outline"] {
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+[data-skin="win98"] [data-slot="badge"][data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--primary-foreground);
+}
+/* Switch: sunken white channel; checked track flips to selection navy.      */
+[data-skin="win98"] [data-slot="switch"] {
+  border-radius: var(--radius);
+  background: var(--input);
+  box-shadow: var(--w98-field);
+  border: 0;
+}
+[data-skin="win98"] [data-slot="switch"][data-state="checked"] {
+  background: var(--primary);
+}
+/* Thumb: square raised grey button with the 1px black frame isolating it
+   from the track — without it the bevel melts into the white channel.       */
+[data-skin="win98"] [data-slot="switch-thumb"] {
+  border-radius: var(--radius);
+  background: var(--w98-shadow-face);
+  box-shadow: var(--w98-frame), var(--w98-raised);
+}
+[data-skin="win98"] [data-slot="progress"] {
+  border-radius: var(--radius);
+  background: var(--input);
+  box-shadow: var(--w98-field);
+}
+[data-skin="win98"] [data-slot="progress-indicator"] {
+  border-radius: var(--radius);
+  background: var(--primary);
+}
+[data-skin="win98"] [data-slot="slider-track"] {
+  border-radius: var(--radius);
+  background: var(--input);
+  box-shadow: var(--w98-field);
+}
+[data-skin="win98"] [data-slot="slider-thumb"] {
+  border-radius: var(--radius);
+  background: var(--w98-shadow-face);
+  box-shadow: var(--w98-raised);
+  border: 0;
+}

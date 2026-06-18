@@ -1,0 +1,384 @@
+/* ==========================================================================
+   SKIN: Terminal / TUI   ·   [data-skin="terminal"]
+   Phosphor green-on-black, monospace everything, hairline green borders,
+   [ bracketed ] buttons, faint CRT scanlines, a blinking block caret, and a
+   faux window-chrome prompt line. Every brand color, radius, glow and border
+   routes through tokens + tunable shape-knob vars — retune the whole CRT from
+   :root. Pure CSS (calc/color-mix only).
+   ========================================================================== */
+
+:root[data-skin="terminal"] {
+  --app-font-sans: "JetBrains Mono", "Cascadia Mono", "DejaVu Sans Mono", ui-monospace, "Courier New", monospace;
+  --app-font-heading: var(--app-font-sans);
+  --app-font-mono: var(--app-font-sans);
+  --app-font-size: 13px;
+
+  --radius: 0px;
+
+  --background: #0a120c;
+  --foreground: #2bff66;
+  --card: #0c1810;
+  --card-foreground: #2bff66;
+  --popover: #0c1810;
+  --popover-foreground: #2bff66;
+  --primary: #2bff66;
+  --primary-foreground: #04140a;
+  --secondary: #0c1810;
+  --secondary-foreground: #2bff66;
+  --muted: #0c1810;
+  --muted-foreground: #57c878;
+  --accent: #7dff9f;
+  --accent-foreground: #04140a;
+  --destructive: #ff5f56;
+  --destructive-foreground: #120404;
+  --border: #1f6f3a;
+  --input: #1f6f3a;
+  --ring: #2bff66;
+  --chart-1: #2bff66;
+  --chart-2: #17a843;
+  --chart-3: #7dff9f;
+  --chart-4: #0c6b27;
+  --chart-5: #b6ffca;
+
+  /* ---- Tunable shape knobs (consumed in rules below) ------------------- */
+  --term-glow: 8;                 /* phosphor focus/halo glow radius, px     */
+  --term-text-glow: 0.45;         /* universal text-shadow glow opacity 0..1 */
+  --term-scanline: 0.22;          /* CRT scanline darkness 0..1              */
+  --term-scanline-gap: 3px;       /* scanline pitch (px between lines)       */
+  --term-border-width: 1px;       /* hairline border thickness              */
+  --term-border-style: solid;     /* solid | double | dashed (ASCII box)    */
+  --term-border-color: var(--border);
+  --term-well: color-mix(in srgb, #000 35%, var(--card)); /* shared sunken field/track fill */
+  --term-screen: color-mix(in srgb, #000 45%, var(--background)); /* page base behind the vignette */
+
+  /* Composed glow shadows derived from the knobs */
+  --term-glow-soft: 0 0 calc(var(--term-glow) * 1px) color-mix(in srgb, var(--primary) 18%, transparent);
+  --term-glow-mid:  0 0 calc(var(--term-glow) * 1.6px) color-mix(in srgb, var(--primary) 32%, transparent);
+  --term-glow-hard: 0 0 calc(var(--term-glow) * 3px) color-mix(in srgb, var(--primary) 42%, transparent);
+
+  /* Reusable hairline rule built from the border knobs */
+  --term-rule: var(--term-border-width) var(--term-border-style) var(--term-border-color);
+  --term-rule-bright: var(--term-border-width) var(--term-border-style) var(--primary);
+
+  --sidebar: #0c1810;
+  --sidebar-foreground: #2bff66;
+  --sidebar-accent: #2bff66;
+  --sidebar-accent-foreground: #04140a;
+  --sidebar-border: #1f6f3a;
+}
+
+[data-skin="terminal"] body {
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, var(--primary) 6%, transparent), transparent 60%),
+    var(--term-screen);
+  color: var(--foreground);
+}
+[data-skin="terminal"] ::selection { background: var(--primary); color: var(--primary-foreground); }
+
+/* Universal phosphor bleed, driven by --term-text-glow. currentColor keeps the
+   haze hue-correct: red destructive labels glow red, dark ink on filled
+   buttons doesn't haze green. */
+[data-skin="terminal"] * {
+  text-shadow: 0 0 calc(var(--term-glow) * 0.3px) color-mix(in srgb, currentColor calc(var(--term-text-glow) * 100%), transparent);
+}
+
+/* faint CRT scanlines over everything, pitch + darkness tunable */
+[data-skin="terminal"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) calc(var(--term-scanline-gap) - 1px),
+    rgba(0, 0, 0, var(--term-scanline)) calc(var(--term-scanline-gap) - 1px),
+    rgba(0, 0, 0, var(--term-scanline)) var(--term-scanline-gap)
+  );
+  mix-blend-mode: multiply;
+}
+
+@keyframes term-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+/* ---- Shell -------------------------------------------------------------- */
+[data-skin="terminal"] .app { max-width: 980px; }
+[data-skin="terminal"] .app-bar {
+  background: var(--background);
+  border: var(--term-rule);
+  border-radius: var(--radius);
+  box-shadow: var(--term-glow-soft);
+  backdrop-filter: none;
+}
+[data-skin="terminal"] .app-brand::before { content: "$ "; color: var(--muted-foreground); }
+[data-skin="terminal"] .app-bar-controls label::before { content: "--"; opacity: 0.6; }
+
+[data-skin="terminal"] .app-nav-inner {
+  border: var(--term-rule);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+[data-skin="terminal"] .app-nav-title { color: var(--muted-foreground); }
+[data-skin="terminal"] .app-nav-title::before { content: "~/"; }
+[data-skin="terminal"] .app-nav a { border-radius: var(--radius); }
+[data-skin="terminal"] .app-nav a::before { content: "› "; color: var(--border); }
+[data-skin="terminal"] .app-nav a:hover { background: var(--primary); color: var(--primary-foreground); }
+[data-skin="terminal"] .app-nav a:hover::before { color: var(--primary-foreground); }
+
+[data-skin="terminal"] .hero {
+  position: relative;
+  border: var(--term-rule);
+  border-radius: var(--radius);
+  background: var(--background);
+  /* reserve room for the absolutely-positioned prompt strip below */
+  padding-top: calc(24px + 1.5rem);
+}
+/* faux window-chrome prompt line at the top of the hero panel */
+[data-skin="terminal"] .hero::before {
+  content: "user@tui:~$";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 10px;
+  font: 600 11px/1.2 var(--app-font-mono);
+  letter-spacing: 0.04em;
+  color: var(--primary-foreground);
+  background: var(--primary);
+  box-shadow: var(--term-glow-soft);
+}
+[data-skin="terminal"] .hero > * { position: relative; }
+[data-skin="terminal"] .hero-kicker { color: var(--primary); }
+[data-skin="terminal"] .hero-kicker::after {
+  content: "█";
+  margin-left: 2px;
+  animation: term-blink 1s steps(1) infinite;
+}
+[data-skin="terminal"] .hero-title { color: var(--primary); }
+[data-skin="terminal"] .hero-sub { color: var(--muted-foreground); }
+
+[data-skin="terminal"] .specimen {
+  border: var(--term-rule);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+[data-skin="terminal"] .specimen-head {
+  border-bottom: var(--term-rule);
+  background: color-mix(in srgb, var(--primary) 6%, var(--card));
+}
+[data-skin="terminal"] .specimen-title { color: var(--primary); }
+[data-skin="terminal"] .specimen-title::before { content: "// "; color: var(--muted-foreground); }
+[data-skin="terminal"] .specimen-tag { color: var(--muted-foreground); }
+
+[data-skin="terminal"] .app-status {
+  border: var(--term-rule);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--muted-foreground);
+}
+
+/* ---- Controls ----------------------------------------------------------- */
+[data-skin="terminal"] .group\/button {
+  border: var(--term-rule-bright);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: none;
+  transition: box-shadow .12s, background .12s, color .12s;
+}
+[data-skin="terminal"] .group\/button::before { content: "[ "; }
+[data-skin="terminal"] .group\/button::after { content: " ]"; }
+[data-skin="terminal"] .group\/button:hover { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--term-glow-mid); }
+[data-skin="terminal"] .group\/button:active:not(:disabled) { background: color-mix(in srgb, var(--primary) 70%, #000); }
+[data-skin="terminal"] .group\/button:focus-visible {
+  outline: var(--term-border-width) dashed var(--ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 calc(var(--term-glow) * 1px) color-mix(in srgb, var(--ring) calc(var(--term-text-glow) * 90%), transparent);
+}
+
+/* default — solid filled phosphor block */
+[data-skin="terminal"] .group\/button[data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--term-glow-soft);
+}
+/* secondary — dim filled panel, muted label */
+[data-skin="terminal"] .group\/button[data-variant="secondary"] {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--muted-foreground);
+}
+[data-skin="terminal"] .group\/button[data-variant="secondary"]:hover {
+  background: color-mix(in srgb, var(--primary) 14%, var(--card));
+  color: var(--primary);
+}
+/* outline — transparent, bright phosphor frame */
+[data-skin="terminal"] .group\/button[data-variant="outline"] {
+  background: transparent;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+/* ghost — borderless until hover */
+[data-skin="terminal"] .group\/button[data-variant="ghost"] {
+  border-color: transparent;
+  background: transparent;
+  color: var(--primary);
+}
+[data-skin="terminal"] .group\/button[data-variant="ghost"]:hover {
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+}
+/* destructive — red phosphor */
+[data-skin="terminal"] .group\/button[data-variant="destructive"] {
+  border-color: var(--destructive);
+  color: var(--destructive);
+  background: transparent;
+}
+[data-skin="terminal"] .group\/button[data-variant="destructive"]:hover {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  box-shadow: 0 0 calc(var(--term-glow) * 1.6px) color-mix(in srgb, var(--destructive) 38%, transparent);
+}
+/* link — underline only, no brackets */
+[data-skin="terminal"] .group\/button[data-variant="link"] { border: 0; color: var(--primary); text-decoration: underline; box-shadow: none; }
+[data-skin="terminal"] .group\/button[data-variant="link"]::before,
+[data-skin="terminal"] .group\/button[data-variant="link"]::after { content: ""; }
+/* disabled — powered-down: hollow frame, dim label, no glow (any variant) */
+[data-skin="terminal"] .group\/button:disabled {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted-foreground);
+  box-shadow: none;
+  text-shadow: none;
+}
+
+[data-skin="terminal"] [data-slot="input"],
+[data-skin="terminal"] [data-slot="textarea"],
+[data-skin="terminal"] [data-slot="select-trigger"],
+[data-skin="terminal"] .skin-select {
+  border: var(--term-rule);
+  border-radius: var(--radius);
+  background: var(--term-well);
+  color: var(--primary);
+  caret-color: var(--primary);
+}
+[data-skin="terminal"] [data-slot="input"]::placeholder,
+[data-skin="terminal"] [data-slot="textarea"]::placeholder { color: color-mix(in srgb, var(--muted-foreground) 70%, transparent); }
+[data-skin="terminal"] [data-slot="input"]:focus-visible,
+[data-skin="terminal"] [data-slot="textarea"]:focus-visible,
+[data-skin="terminal"] [data-slot="select-trigger"]:focus-visible {
+  outline: 0;
+  border-color: var(--ring);
+  box-shadow: 0 0 calc(var(--term-glow) * 1px) color-mix(in srgb, var(--ring) calc(var(--term-text-glow) * 100%), transparent);
+}
+
+[data-skin="terminal"] [data-slot="card"] { border: var(--term-rule); border-radius: var(--radius); background: var(--background); }
+
+[data-skin="terminal"] [data-slot="popover-content"],
+[data-skin="terminal"] [data-slot="dropdown-menu-content"],
+[data-skin="terminal"] [data-slot="context-menu-content"],
+[data-skin="terminal"] [data-slot="select-content"],
+[data-skin="terminal"] [data-slot="command"],
+[data-skin="terminal"] [data-slot="hover-card-content"] {
+  border: var(--term-rule-bright);
+  border-radius: var(--radius);
+  background: var(--background);
+  box-shadow: var(--term-glow-mid);
+}
+[data-skin="terminal"] [data-slot="tooltip-content"] {
+  border: var(--term-rule-bright);
+  border-radius: var(--radius);
+  background: var(--primary-foreground);
+  color: var(--primary);
+}
+[data-skin="terminal"] [data-slot="tooltip-content"] svg { fill: var(--primary-foreground); }
+
+[data-skin="terminal"] [data-slot="dropdown-menu-item"][data-highlighted],
+[data-skin="terminal"] [data-slot="context-menu-item"][data-highlighted],
+[data-skin="terminal"] [data-slot="select-item"][data-highlighted],
+[data-skin="terminal"] [data-slot="command-item"][data-selected="true"] {
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-skin="terminal"] [data-slot="dialog-content"],
+[data-skin="terminal"] [data-slot="alert-dialog-content"],
+[data-skin="terminal"] [data-slot="sheet-content"] {
+  border: var(--term-rule-bright);
+  border-radius: var(--radius);
+  background: var(--background);
+  box-shadow: var(--term-glow-hard);
+}
+
+[data-skin="terminal"] [data-slot="checkbox"] {
+  border: var(--term-rule-bright);
+  border-radius: var(--radius);
+  background: var(--term-well);
+  color: var(--primary-foreground);
+}
+[data-skin="terminal"] [data-slot="checkbox"][data-state="checked"] { background: var(--primary); box-shadow: var(--term-glow-soft); }
+[data-skin="terminal"] [data-slot="radio-group-item"] {
+  border: var(--term-rule-bright);
+  border-radius: 9999px;
+  background: var(--term-well);
+  color: var(--primary);
+}
+/* checked radio gets the same phosphor halo as the checked checkbox */
+[data-skin="terminal"] [data-slot="radio-group-item"][data-state="checked"] {
+  border-color: var(--primary);
+  box-shadow: var(--term-glow-soft);
+}
+
+[data-skin="terminal"] [data-slot="tabs-list"] { border-radius: var(--radius); background: transparent; gap: 0; border-bottom: var(--term-rule); }
+[data-skin="terminal"] [data-slot="tabs-trigger"] {
+  border: var(--term-rule);
+  border-bottom: 0;
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--muted-foreground);
+  margin-right: -1px;
+}
+[data-skin="terminal"] [data-slot="tabs-trigger"][data-state="active"] { background: var(--primary); color: var(--primary-foreground); font-weight: 700; box-shadow: var(--term-glow-soft); }
+
+[data-skin="terminal"] [data-slot="badge"] { border-radius: var(--radius); border: var(--term-rule-bright); background: transparent; color: var(--primary); }
+[data-skin="terminal"] [data-slot="badge"][data-variant="default"] { background: var(--primary); color: var(--primary-foreground); }
+[data-skin="terminal"] [data-slot="badge"][data-variant="secondary"] { background: var(--card); border-color: var(--border); color: var(--muted-foreground); }
+[data-skin="terminal"] [data-slot="badge"][data-variant="destructive"] { background: transparent; border-color: var(--destructive); color: var(--destructive); }
+[data-skin="terminal"] [data-slot="badge"][data-variant="outline"] { background: transparent; border-color: var(--border); color: var(--foreground); }
+
+/* off: dim frame, dark well, muted thumb — clearly powered down */
+[data-skin="terminal"] [data-slot="switch"] { border: var(--term-rule); border-radius: var(--radius); background: var(--term-well); }
+[data-skin="terminal"] [data-slot="switch"] [data-slot="switch-thumb"] { border-radius: var(--radius); background: var(--muted-foreground); box-shadow: none; }
+/* on: bright frame, phosphor-tinted well, glowing primary thumb */
+[data-skin="terminal"] [data-slot="switch"][data-state="checked"] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 22%, var(--card)); box-shadow: inset var(--term-glow-soft); }
+[data-skin="terminal"] [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] { background: var(--primary); box-shadow: var(--term-glow-soft); }
+
+[data-skin="terminal"] [data-slot="progress"] { border: var(--term-rule); border-radius: var(--radius); background: var(--term-well); }
+[data-skin="terminal"] [data-slot="progress-indicator"] { border-radius: var(--radius); background: var(--primary); box-shadow: var(--term-glow-soft); }
+
+[data-skin="terminal"] [data-slot="slider-track"] { border: var(--term-rule); border-radius: var(--radius); background: var(--term-well); }
+[data-skin="terminal"] [data-slot="slider-range"] { background: var(--primary); }
+[data-skin="terminal"] [data-slot="slider-thumb"] {
+  border: var(--term-border-width) solid var(--primary-foreground);
+  border-radius: var(--radius);
+  background: var(--primary);
+  box-shadow: var(--term-glow-mid);
+}
+
+[data-skin="terminal"] [data-slot="alert"] { border: var(--term-rule); border-radius: var(--radius); }
+[data-skin="terminal"] [data-slot="table"] { border: var(--term-rule); }
+
+/* Chart: phosphor glow on the bars + dashed grid (layer-3 SVG CSS). Fills come
+   free from the --chart-* tokens above. NOTE: the bar corner-radius is recharts
+   geometry set in JSX (radius={4}); CSS can't flatten it — that's a per-usage
+   prop, not a skin concern. */
+[data-skin="terminal"] [data-slot="chart"] .recharts-bar-rectangle path {
+  filter: drop-shadow(0 0 calc(var(--term-glow) * 0.4px) color-mix(in srgb, var(--primary) 85%, transparent));
+}
+[data-skin="terminal"] [data-slot="chart"] .recharts-cartesian-grid line {
+  stroke: var(--border);
+  stroke-dasharray: 2 3;
+}
