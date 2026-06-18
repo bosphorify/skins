@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "bosphorify-skins",
-  "homepage": "https://github.com/mtahasylmz/bosphorify-skins",
+  "homepage": "https://github.com/bosphorify/skins",
   "items": [
     {
       "name": "skin-base",

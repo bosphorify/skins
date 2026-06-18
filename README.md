@@ -14,7 +14,7 @@ This repo is **themes only** — just the skin CSS and the installable registry.
 **1. Install** — writes `app/skins/xp.css`, your components stay untouched:
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/mtahasylmz/bosphorify-skins/master/r/skin-xp.json
+npx shadcn@latest add https://raw.githubusercontent.com/bosphorify/skins/master/r/skin-xp.json
 ```
 
 **2. Import** it in your global stylesheet (e.g. `app/globals.css`):
@@ -45,7 +45,7 @@ Register the namespace once in your project's `components.json`:
 ```jsonc
 {
   "registries": {
-    "@skins": "https://raw.githubusercontent.com/mtahasylmz/bosphorify-skins/master/r/{name}.json"
+    "@skins": "https://raw.githubusercontent.com/bosphorify/skins/master/r/{name}.json"
   }
 }
 ```
