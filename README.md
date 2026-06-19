@@ -34,9 +34,9 @@ Every shadcn component now renders in the **XP** skin. To use another concept,
 change **both** the URL's `skin-<name>` and the `data-skin` value. Switch at
 runtime by setting `document.documentElement.dataset.skin = "terminal"`.
 
-> The raw-GitHub URL above works as soon as this repo is public. Until then, the
-> identical registry is also live from the showcase repo:
-> `https://raw.githubusercontent.com/mtahasylmz/shadcn-xp/master/public/r/skin-xp.json`
+> This is the canonical, maintained source. The same registry is also mirrored
+> by the showcase repo (`mtahasylmz/shadcn-xp`), but that copy may drift — prefer
+> the URL above.
 
 ### Install several / drive it from an agent
 
